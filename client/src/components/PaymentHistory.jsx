@@ -16,7 +16,11 @@ import {
   FormControl,
   InputLabel,
   Pagination,
+  IconButton,
 } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 
 function PaymentHistory() {
   const dummyData = [
@@ -38,7 +42,7 @@ function PaymentHistory() {
   const [type, setType] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const [page, setPage] = useState(1);
-  const rowsPerPage = 8;
+  const rowsPerPage = 5;
 
   // Filter, Search, and Sort Logic
   const filteredData = dummyData
@@ -120,6 +124,7 @@ function PaymentHistory() {
               <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Vehicle Number</TableCell>
               <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Insurance Type</TableCell>
               <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Amount</TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -136,6 +141,14 @@ function PaymentHistory() {
                 <TableCell>{row.vehicleNumber}</TableCell>
                 <TableCell>{row.InsuranceType}</TableCell>
                 <TableCell>{row.Amount}</TableCell>
+                <TableCell>
+                  <IconButton color="primary">
+                    <VisibilityIcon />
+                  </IconButton>
+                  <IconButton color="error">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
