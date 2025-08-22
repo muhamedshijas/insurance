@@ -1,9 +1,13 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
 import bg from "../images/bg.jpg";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
 
 function Login() {
   const [dateTime, setDateTime] = useState(new Date());
+  const [userId, setUserId] = useState("");
+  const dispatch = useDispatch();
 
   // Update time every second
   useEffect(() => {
@@ -12,6 +16,24 @@ function Login() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Handle login submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post("/auth/login", { userId });
+
+      if (data.success) {
+        // ✅ trigger redux to refresh & check auth again
+        dispatch({ type: "refresh" });
+      } else {
+        alert(data.message || "Invalid Credentials");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Login failed. Try again!");
+    }
+  };
 
   return (
     <Box
@@ -43,7 +65,11 @@ function Login() {
             lineHeight: 1.2,
           }}
         >
-          {dateTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+          {dateTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })}
         </Typography>
         <Typography
           variant="subtitle1"
@@ -59,6 +85,8 @@ function Login() {
 
       {/* Glassmorphism Login Box */}
       <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
           width: 300,
           padding: 4,
@@ -76,10 +104,13 @@ function Login() {
         <Typography variant="h6" color="white" textAlign="center">
           Login
         </Typography>
+
         <TextField
           label="User ID"
           variant="outlined"
           fullWidth
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
           sx={{
             input: { color: "white" },
             label: { color: "white" },
@@ -89,9 +120,17 @@ function Login() {
             },
           }}
         />
+
         <Button
+          type="submit"
           variant="contained"
-          sx={{ backgroundColor: "rgba(255,255,255,0.2)", color: "white" }}
+          sx={{
+            backgroundColor: "rgba(255,255,255,0.2)",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.3)",
+            },
+          }}
         >
           Submit
         </Button>

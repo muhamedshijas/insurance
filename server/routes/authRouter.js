@@ -1,9 +1,8 @@
-export async function login(req, res) {
-  const { userId } = req.body;
-  if (userId == "admin1234") {
-    console.log("success");
-    return res.json({ success: true, message: "Loggin successfull" });
-  } else {
-    return res.json({ success: false, message: "Invalid Credentials" }); 
-  }
-}
+import express from "express";
+import { checkAuth, login } from "../controllers/authController.js";
+const router = express.Router();
+
+router.post("/login", login);
+router.get("/checkauth", checkAuth);
+
+export default router;
