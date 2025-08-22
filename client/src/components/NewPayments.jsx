@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { motion } from "framer-motion";
 
 function NewPayments() {
   const dummyData = [
@@ -29,48 +30,23 @@ function NewPayments() {
       Amount: "₹7,500",
     },
     {
-      date: "2025-08-13",
-      OwnerName: "John Doe",
-      vehicleNumber: "KL-07-AB-1234",
+      date: "2025-08-14",
+      OwnerName: "Meera Nair",
+      vehicleNumber: "KL-08-EF-9876",
       InsuranceType: "Comprehensive",
-      Amount: "₹12,000",
-    },
-    {
-      date: "2025-08-12",
-      OwnerName: "Akhil Kumar",
-      vehicleNumber: "KL-05-CD-5678",
-      InsuranceType: "Third Party",
-      Amount: "₹7,500",
-    },
-    {
-      date: "2025-08-13",
-      OwnerName: "John Doe",
-      vehicleNumber: "KL-07-AB-1234",
-      InsuranceType: "Comprehensive",
-      Amount: "₹12,000",
-    },
-    {
-      date: "2025-08-12",
-      OwnerName: "Akhil Kumar",
-      vehicleNumber: "KL-05-CD-5678",
-      InsuranceType: "Third Party",
-      Amount: "₹7,500",
-    },
-    {
-      date: "2025-08-13",
-      OwnerName: "John Doe",
-      vehicleNumber: "KL-07-AB-1234",
-      InsuranceType: "Comprehensive",
-      Amount: "₹12,000",
-    },
-    {
-      date: "2025-08-12",
-      OwnerName: "Akhil Kumar",
-      vehicleNumber: "KL-05-CD-5678",
-      InsuranceType: "Third Party",
-      Amount: "₹7,500",
+      Amount: "₹15,000",
     },
   ];
+
+  // Animation variant
+  const rowVariant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1, duration: 0.4 },
+    }),
+  };
 
   return (
     <Box p={3}>
@@ -83,7 +59,7 @@ function NewPayments() {
         mb={3}
       >
         <Typography variant="h5" fontWeight="bold" color="#333">
-          Latest Payments
+          Today's Payment
         </Typography>
         <Button
           sx={{
@@ -102,10 +78,7 @@ function NewPayments() {
       </Box>
 
       {/* Table */}
-      <TableContainer
-        component={Paper}
-        sx={{ boxShadow: 3, borderRadius: "8px" }}
-      >
+      <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: "8px"  }}>
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#E8F5E9" }}>
@@ -128,19 +101,24 @@ function NewPayments() {
           </TableHead>
           <TableBody>
             {dummyData.map((row, index) => (
-              <TableRow
+              <motion.tr
                 key={index}
-                sx={{
+                variants={rowVariant}
+                initial="hidden"
+                animate="visible"
+                custom={index}
+                style={{
                   backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F1F8E9",
-                  "&:hover": { backgroundColor: "#DCEDC8" },
+                  cursor: "pointer",
                 }}
+                whileHover={{  backgroundColor: "#DCEDC8" }}
               >
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.OwnerName}</TableCell>
                 <TableCell>{row.vehicleNumber}</TableCell>
                 <TableCell>{row.InsuranceType}</TableCell>
                 <TableCell>{row.Amount}</TableCell>
-              </TableRow>
+              </motion.tr>
             ))}
           </TableBody>
         </Table>

@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import {motion} from 'framer-motion'
 
 function PaymentHistory() {
   const dummyData = [
@@ -59,7 +59,14 @@ function PaymentHistory() {
     );
 
   const paginatedData = filteredData.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-
+const rowVariant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1, duration: 0.6 },
+    }),
+  };
   return (
     <Box p={3}>
       {/* Heading */}
@@ -129,12 +136,17 @@ function PaymentHistory() {
           </TableHead>
           <TableBody>
             {paginatedData.map((row, index) => (
-              <TableRow
+              <motion.tr
                 key={index}
-                sx={{
+                variants={rowVariant}
+                initial="hidden"
+                animate="visible"
+                custom={index}
+                style={{
                   backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F1F8E9",
-                  "&:hover": { backgroundColor: "#DCEDC8" },
+                  cursor: "pointer",
                 }}
+                whileHover={{  backgroundColor: "#DCEDC8" }}
               >
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.OwnerName}</TableCell>
@@ -149,7 +161,7 @@ function PaymentHistory() {
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
-              </TableRow>
+              </motion.tr>
             ))}
           </TableBody>
         </Table>
