@@ -10,10 +10,15 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import AddData from "../modals/AddData";
 
 function NewPayments() {
+  const [show, setShow] = useState(false);
+  const handleShow = () => {
+    setShow(!show);
+  };
   const dummyData = [
     {
       date: "2025-08-13",
@@ -72,13 +77,17 @@ function NewPayments() {
               background: "#43A047",
             },
           }}
+          onClick={handleShow}
         >
           Add New Payment
         </Button>
       </Box>
 
       {/* Table */}
-      <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: "8px"  }}>
+      <TableContainer
+        component={Paper}
+        sx={{ boxShadow: 3, borderRadius: "8px" }}
+      >
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#E8F5E9" }}>
@@ -111,7 +120,7 @@ function NewPayments() {
                   backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F1F8E9",
                   cursor: "pointer",
                 }}
-                whileHover={{  backgroundColor: "#DCEDC8" }}
+                whileHover={{ backgroundColor: "#DCEDC8" }}
               >
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.OwnerName}</TableCell>
@@ -123,6 +132,7 @@ function NewPayments() {
           </TableBody>
         </Table>
       </TableContainer>
+      {show && <AddData show={show} setShow={setShow} />}
     </Box>
   );
 }

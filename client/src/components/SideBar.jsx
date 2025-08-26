@@ -2,24 +2,29 @@ import { Box, Button, Typography } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 
 function SideBar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const menuItems = [
     { label: "Dashboard", path: "/" },
     { label: "New Payment", path: "/new-payment" },
     { label: "Payments History", path: "/payments-history" },
+    { label: "Catlogs", path: "/catlog" },
     { label: "Reports", path: "/reports" },
-    { label: "Settings", path: "/settings" },
   ];
 
   async function handleLogout() {
     try {
-      await axios.get("/logout"); // Adjust API endpoint if needed
-      // Clear user session here if you store tokens
-      navigate("/login"); // Redirect to login page
+      await axios.get("/auth/logout");
+      dispatch({
+        type: "user",
+        payload: { login: false, details: null },
+      });
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
     }

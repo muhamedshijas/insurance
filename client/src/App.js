@@ -15,6 +15,7 @@ import PaymentHistory from "./components/PaymentHistory";
 import Reports from "./components/Reports";
 import NewPayments from "./components/NewPayments";
 import Login from "./components/Login";
+import Catlog from "./components/Catlog";
 
 function App() {
   axios.defaults.baseURL = "http://localhost:5000/";
@@ -85,6 +86,7 @@ function App() {
               <Route path="/new-payment" element={<NewPayments />} />
               <Route path="/payments-history" element={<PaymentHistory />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/catlog" element={<Catlog />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </>
           )}

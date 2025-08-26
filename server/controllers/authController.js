@@ -7,7 +7,9 @@ export async function login(req, res) {
 
   if (userId === user.id) {
     // create token
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     return res
       .cookie("usertoken", token, {
@@ -38,5 +40,22 @@ export async function checkAuth(req, res) {
     return res.json({ loggedIn: true, user });
   } catch (err) {
     return res.json({ loggedIn: false });
+  }
+}
+
+export async function logout(req, res) {
+  try {
+    console.log("logouted");
+    
+    return res
+      .cookie("usertoken", "", {
+        httpOnly: true,
+        expires: new Date(0),
+        secure: true,
+        sameSite: "none",
+      })
+      .json({ message: "Logged out", error: false });
+  } catch (err) {
+    console.log(err);
   }
 }
