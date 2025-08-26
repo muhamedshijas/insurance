@@ -3,6 +3,7 @@ import dbConnect from "./config/dbConnect.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRouter from "./routes/authRouter.js";
+import catlogRouter from "./routes/catlogRouter.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(
 );
 dbConnect();
 app.use("/auth", authRouter);
+app.use("/catlog", catlogRouter);
 app.listen(5000, () => {
   console.log("App is running on port 5000");
 });
