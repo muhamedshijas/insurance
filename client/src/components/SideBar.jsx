@@ -1,8 +1,18 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+
+// Lucide-react icons
+import {
+  LayoutDashboard,
+  CreditCard,
+  History,
+  Boxes,
+  BarChart3,
+  LogOut,
+} from "lucide-react";
 
 function SideBar() {
   const location = useLocation();
@@ -10,11 +20,11 @@ function SideBar() {
   const dispatch = useDispatch();
 
   const menuItems = [
-    { label: "Dashboard", path: "/" },
-    { label: "New Payment", path: "/new-payment" },
-    { label: "Payments History", path: "/payments-history" },
-    { label: "Catlogs", path: "/catlog" },
-    { label: "Reports", path: "/reports" },
+    { label: "Dashboard", path: "/", icon: <LayoutDashboard size={20} /> },
+    { label: "New Payment", path: "/new-payment", icon: <CreditCard size={20} /> },
+    { label: "Payments History", path: "/payments-history", icon: <History size={20} /> },
+    { label: "Catlogs", path: "/catlog", icon: <Boxes size={20} /> },
+    { label: "Reports", path: "/reports", icon: <BarChart3 size={20} /> },
   ];
 
   async function handleLogout() {
@@ -53,32 +63,39 @@ function SideBar() {
 
       {/* Navigation Links */}
       <Box flex={1}>
-        {menuItems.map((item, index) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Typography
-              key={index}
-              component={Link}
-              to={item.path}
-              variant="body1"
-              sx={{
-                p: 1.5,
-                borderRadius: "6px",
-                color: isActive ? "#FFFFFF" : "#5F5F5F",
-                backgroundColor: isActive ? "#4CAF50" : "transparent",
-                textDecoration: "none",
-                display: "block",
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: isActive ? "#45A049" : "#E8F5E9",
-                  color: isActive ? "#FFFFFF" : "#388E3C",
-                },
-              }}
-            >
-              {item.label}
-            </Typography>
-          );
-        })}
+        <List>
+          {menuItems.map((item, index) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <ListItem
+                key={index}
+                button
+                component={Link}
+                to={item.path}
+                sx={{
+                  mb: 1,
+                  borderRadius: "6px",
+                  backgroundColor: isActive ? "#4CAF50" : "transparent",
+                  color: isActive ? "#FFFFFF" : "#5F5F5F",
+                  "&:hover": {
+                    backgroundColor: isActive ? "#45A049" : "#E8F5E9",
+                    color: isActive ? "#FFFFFF" : "#388E3C",
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: isActive ? "#FFFFFF" : "#4CAF50",
+                    minWidth: "40px",
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItem>
+            );
+          })}
+        </List>
       </Box>
 
       {/* Logout Button */}
@@ -90,8 +107,12 @@ function SideBar() {
           mt: "auto",
           textTransform: "none",
           fontWeight: "bold",
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
         }}
       >
+        <LogOut size={18} />
         Logout
       </Button>
     </Box>

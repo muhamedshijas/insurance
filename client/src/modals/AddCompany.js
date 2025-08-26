@@ -63,7 +63,7 @@ function AddCompany({ show, setShow }) {
           fullWidth
         />
         <Button
-          variant="contained"
+          variant="contained" 
           fullWidth
           onClick={handleSubmit}
           style={{ marginTop: "10px", background: "#4CAF50", color: "white" }}

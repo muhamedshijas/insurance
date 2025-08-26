@@ -72,4 +72,4 @@ export async function addPolicy(req, res) {
     console.error("Error while adding policy:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
-}
+} 
