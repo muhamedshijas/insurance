@@ -20,6 +20,7 @@ function AddCompany({ show, setShow }) {
       setErr(data.err);
     }
   };
+
   return (
     <Box
       width="100vw"
@@ -63,7 +64,7 @@ function AddCompany({ show, setShow }) {
           fullWidth
         />
         <Button
-          variant="contained" 
+          variant="contained"
           fullWidth
           onClick={handleSubmit}
           style={{ marginTop: "10px", background: "#4CAF50", color: "white" }}

@@ -72,4 +72,24 @@ export async function addPolicy(req, res) {
     console.error("Error while adding policy:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
-} 
+}
+
+export async function getPolicies(req, res) {
+  try {
+    const policies = await PolicyModel.find().lean();
+    return res.json({ success: true, policies });
+  } catch (err) {
+    console.log(err);
+    return res.json({ success: false, message: "internal sever error" });
+  }
+}
+
+export async function deletePolicy(req, res) {
+  try {
+    const { id } = req.params;
+    await PolicyModel.findByIdAndDelete(id);
+    res.json({ success: true, message: "Company deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Error deleting policy" });
+  }
+}

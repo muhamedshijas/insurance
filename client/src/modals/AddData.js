@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,8 +8,13 @@ import {
   Button,
   TextField,
   Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { CloseRounded } from "@mui/icons-material";
+import axios from "axios";
 
 const steps = [
   "Customer Details",
@@ -22,10 +27,14 @@ export default function AddData({ show, setShow }) {
   const handleShow = () => {
     setShow(!show);
   };
+
   const [activeStep, setActiveStep] = useState(0);
+  const [companies, setCompanies] = useState([]);
+  const [policies, setPolicies] = useState([]);
+
   const [formData, setFormData] = useState({
-    branch: "",
-    agent: "",
+    branch: "Pulamanthole",
+    agent: "EmythriKadampuzha",
     customerName: "",
     vehicleNumber: "",
     policyType: "",
@@ -36,13 +45,37 @@ export default function AddData({ show, setShow }) {
     comm: "",
   });
 
+  // Fetch Companies
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get("/catlog/get-companies");
+        if (!data.err) setCompanies(data.companies);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
+  // Fetch Policies
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get("/catlog/get-policies");
+        if (!data.err) setPolicies(data.policies);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);
     } else {
       console.log("✅ Final Submit Data:", formData);
       alert("Data Submitted Successfully!");
-      // here you can send formData to backend
+      // send formData to backend here
     }
   };
 
@@ -78,7 +111,7 @@ export default function AddData({ show, setShow }) {
             Add Data
           </Typography>
           <Button onClick={handleShow}>
-            <CloseRounded />{" "}
+            <CloseRounded />
           </Button>
         </Box>
 
@@ -98,12 +131,14 @@ export default function AddData({ show, setShow }) {
               <TextField
                 label="Branch"
                 name="branch"
+                disabled
                 value={formData.branch}
                 onChange={handleChange}
               />
               <TextField
                 label="Agent Name"
                 name="agent"
+                disabled
                 value={formData.agent}
                 onChange={handleChange}
               />
@@ -125,12 +160,23 @@ export default function AddData({ show, setShow }) {
                 value={formData.vehicleNumber}
                 onChange={handleChange}
               />
-              <TextField
-                label="Policy Type"
-                name="policyType"
-                value={formData.policyType}
-                onChange={handleChange}
-              />
+
+              {/* Policy Select */}
+              <FormControl fullWidth>
+                <InputLabel>Policy Type</InputLabel>
+                <Select
+                  name="policyType"
+                  value={formData.policyType}
+                  onChange={handleChange}
+                >
+                  {policies.map((policy) => (
+                    <MenuItem key={policy._id} value={policy.name}>
+                      {policy.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
               <TextField
                 label="Inspection Photo (Yes/No)"
                 name="inspectionPhoto"
@@ -143,12 +189,22 @@ export default function AddData({ show, setShow }) {
           {/* Step 3: Company & Payment */}
           {activeStep === 2 && (
             <Box display="flex" flexDirection="column" gap={2}>
-              <TextField
-                label="Company"
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-              />
+              {/* Company Select */}
+              <FormControl fullWidth>
+                <InputLabel>Company</InputLabel>
+                <Select
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                >
+                  {companies.map((company) => (
+                    <MenuItem key={company._id} value={company.name}>
+                      {company.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
               <TextField
                 label="Net"
                 name="net"

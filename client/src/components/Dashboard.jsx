@@ -1,5 +1,17 @@
 // Dashboard.jsx
-import { Box, Card, CardContent, Typography, Grid } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Table,
+} from "@mui/material";
 import {
   AssignmentTurnedIn,
   PendingActions,
@@ -26,13 +38,17 @@ import React from "react";
 const companyData = [
   { name: "GODIGIT", value: 10 },
   { name: "NEW INDIA", value: 4 },
-  { name: "IFFCO", value: 3 },
+  { name: "IFFCO TOKIO", value: 6 },
+  { name: "HDFC ERGO", value: 8 },
+  { name: "ICICI LOMBARD", value: 12 },
 ];
 
 const policyTypeData = [
-  { name: "TP", value: 8 },
-  { name: "PKG", value: 7 },
-  { name: "Standalone", value: 1 },
+  { name: "Third Party (TP)", value: 14 },
+  { name: "Comprehensive (PKG)", value: 18 },
+  { name: "Standalone OD", value: 7 },
+  { name: "Health", value: 10 },
+  { name: "Travel", value: 5 },
 ];
 
 const monthlyData = [
@@ -187,6 +203,125 @@ function Dashboard() {
         ))}
       </Grid>
 
+      {/* Distribution Section  */}
+      <Typography variant="h6" mt={5} mb={2} fontWeight="bold">
+        Distribution
+      </Typography>
+
+      <Grid container spacing={3} mt={1}>
+        {/* Company Distribution Table */}
+        <Grid item xs={12} md={6}>
+          <motion.div
+            variants={cardVariant}
+            initial="hidden"
+            animate="visible"
+            custom={4}
+          >
+            <Card sx={{ p: 1, borderRadius: 3, boxShadow: 3, width: "600px" }}>
+              <TableContainer>
+                <Table sx={{ width: "100%" }}>
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "#4CAF50" }}>
+                      <TableCell
+                        sx={{
+                          color: "#FFFFFF",
+                          fontWeight: "bold",
+                          borderTopLeftRadius: "6px",
+                        }}
+                      >
+                        Company
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        sx={{
+                          color: "#ffffff",
+                          borderTopRightRadius: "6px",
+                        }}
+                      >
+                        <b>Count</b>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {companyData.map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{row.name}</TableCell>
+                        <TableCell align="right">{row.value}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+
+                  <caption
+                    style={{
+                      captionSide: "block-end",
+                      fontWeight: "bold",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Company Count Summary
+                  </caption>
+                </Table>
+              </TableContainer>
+            </Card>
+          </motion.div>
+        </Grid>
+
+        {/* Policy Distribution Table */}
+        <Grid item xs={12} md={6}>
+          <motion.div
+            variants={cardVariant}
+            initial="hidden"
+            animate="visible"
+            custom={5}
+          >
+            <Card sx={{ p: 1, borderRadius: 3, boxShadow: 3, width: "400px" }}>
+              <TableContainer>
+                <Table size="medium">
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "#4CAF50" }}>
+                      <TableCell
+                        sx={{
+                          color: "#FFFFFF",
+                          fontWeight: "bold",
+                          borderTopLeftRadius: "6px",
+                        }}
+                      >
+                        Policy
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        sx={{
+                          color: "#ffffff",
+                          borderTopRightRadius: "6px",
+                        }}
+                      >
+                        <b>Count</b>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {policyTypeData.map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{row.name}</TableCell>
+                        <TableCell align="right">{row.value}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <caption
+                    style={{
+                      captionSide: "block-end",
+                      fontWeight: "bold",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Policy Count Summary
+                  </caption>
+                </Table>
+              </TableContainer>
+            </Card>
+          </motion.div>
+        </Grid>
+      </Grid>
       {/* Charts Section */}
       <Typography variant="h6" mt={5} mb={2} fontWeight="bold">
         Analytics

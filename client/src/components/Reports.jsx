@@ -18,14 +18,14 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 
-// Icons
+// Icons (MUI)
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import CancelIcon from "@mui/icons-material/Cancel";
 import PaymentIcon from "@mui/icons-material/Payment";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
-const MotionCard = motion(Card); 
+const MotionCard = motion(Card);
 
 export default function Reports() {
   const [month, setMonth] = useState("All");
@@ -40,41 +40,71 @@ export default function Reports() {
   const filteredTransactions =
     month === "All"
       ? transactions
-      : transactions.filter((t) => new Date(t.date).getMonth() + 1 === Number(month));
+      : transactions.filter(
+          (t) => new Date(t.date).getMonth() + 1 === Number(month)
+        );
 
-  // Application summary data
+  // Application summary with custom colors
   let appSummary = [
-    { label: "Total Applications", value: 120, color: "#1976d2", icon: <AssignmentIcon /> },
-    { label: "Approved", value: 90, color: "#45A049", icon: <DoneAllIcon /> },
-    { label: "Rejected", value: 30, color: "#d32f2f", icon: <CancelIcon /> },
+    {
+      label: "Total Applications",
+      value: 120,
+      icon: <AssignmentIcon />,
+      color: "#2563eb", // blue
+    },
+    {
+      label: "Approved",
+      value: 90,
+      icon: <DoneAllIcon />,
+      color: "#16a34a", // green
+    },
+    {
+      label: "Rejected",
+      value: 30,
+      icon: <CancelIcon />,
+      color: "#dc2626", // red
+    },
   ];
 
-  // Apply sorting
+  // Sorting
   if (sortBy === "value") {
     appSummary = [...appSummary].sort((a, b) => b.value - a.value);
   } else if (sortBy === "name") {
     appSummary = [...appSummary].sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  // Payment summary
+  // Payment summary with colors
   const paymentSummary = [
-    { label: "Total Payments", value: "₹ 25,000", color: "#0288d1", icon: <PaymentIcon /> },
-    { label: "Total Commission", value: "₹ 5,000", color: "#f57c00", icon: <MonetizationOnIcon /> },
+    {
+      label: "Total Payments",
+      value: "₹ 25,000",
+      icon: <PaymentIcon />,
+      color: "#f59e0b", // amber
+    },
+    {
+      label: "Total Commission",
+      value: "₹ 5,000",
+      icon: <MonetizationOnIcon />,
+      color: "#9333ea", // purple
+    },
   ];
 
   return (
     <Box p={3}>
       {/* Header */}
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
+      <Typography variant="h5" fontWeight="bold" gutterBottom color="#16a34a">
         Reports
       </Typography>
 
       {/* Filters */}
       <Box display="flex" gap={3} alignItems="center" mb={3}>
-        {/* Month Filter */}
         <FormControl size="small">
           <InputLabel>Month</InputLabel>
-          <Select value={month} onChange={(e) => setMonth(e.target.value)} label="Month">
+          <Select
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            label="Month"
+          >
             <MenuItem value="All">All</MenuItem>
             <MenuItem value="1">January</MenuItem>
             <MenuItem value="2">February</MenuItem>
@@ -91,10 +121,13 @@ export default function Reports() {
           </Select>
         </FormControl>
 
-        {/* Sorting Filter */}
         <FormControl size="small">
           <InputLabel>Sort By</InputLabel>
-          <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} label="Sort By">
+          <Select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            label="Sort By"
+          >
             <MenuItem value="default">Default</MenuItem>
             <MenuItem value="value">By Value</MenuItem>
             <MenuItem value="name">By Name</MenuItem>
@@ -103,54 +136,74 @@ export default function Reports() {
       </Box>
 
       {/* Application Summary */}
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom color="#15803d">
         Application Summary
       </Typography>
-      <Grid container spacing={2} mb={3}>
+      <Grid container spacing={3} mb={3}>
         {appSummary.map((item, index) => (
-          <Grid item xs={12} sm={4} key={index}>
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <MotionCard
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
-              sx={{ textAlign: "center", p: 2, backgroundColor: item.color, color: "white" }}
+              sx={{
+                height: 160,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderRadius: 3,
+                boxShadow: 3,
+                px: 2,
+              }}
             >
-              <CardContent>
-                <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                  {item.icon}
-                  <Typography variant="h6">{item.label}</Typography>
-                  <Typography variant="h5" fontWeight="bold">
-                    {item.value}
-                  </Typography>
-                </Box>
+              <CardContent sx={{ flex: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {item.label}
+                </Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: item.color }}>
+                  {item.value}
+                </Typography>
               </CardContent>
+              <Box sx={{ fontSize: 40, color: item.color, mr: 2 }}>
+                {item.icon}
+              </Box>
             </MotionCard>
           </Grid>
         ))}
       </Grid>
 
       {/* Payment Summary */}
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom color="#15803d">
         Payment Summary
       </Typography>
-      <Grid container spacing={2} mb={3}>
+      <Grid container spacing={3} mb={3}>
         {paymentSummary.map((item, index) => (
           <Grid item xs={12} sm={6} key={index}>
             <MotionCard
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
-              sx={{ textAlign: "center", p: 2, backgroundColor: item.color, color: "white" }}
+              sx={{
+                height: 160,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderRadius: 3,
+                boxShadow: 3,
+                px: 2,
+              }}
             >
-              <CardContent>
-                <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-                  {item.icon}
-                  <Typography variant="h6">{item.label}</Typography>
-                  <Typography variant="h5" fontWeight="bold">
-                    {item.value}
-                  </Typography>
-                </Box>
+              <CardContent sx={{ flex: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {item.label}
+                </Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: item.color }}>
+                  {item.value}
+                </Typography>
               </CardContent>
+              <Box sx={{ fontSize: 40, color: item.color, mr: 2 }}>
+                {item.icon}
+              </Box>
             </MotionCard>
           </Grid>
         ))}
@@ -159,12 +212,12 @@ export default function Reports() {
       <Divider sx={{ my: 3 }} />
 
       {/* Recent Transactions */}
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom color="#15803d">
         Recent Transactions
       </Typography>
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
+          <TableRow sx={{ backgroundColor: "#E8F5E9" }}>
             <TableCell>Date</TableCell>
             <TableCell>Type</TableCell>
             <TableCell align="right">Amount</TableCell>
@@ -177,10 +230,16 @@ export default function Reports() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
+              style={{ borderBottom: "1px solid #E0E0E0" }}
             >
               <TableCell>{t.date}</TableCell>
               <TableCell>{t.type}</TableCell>
-              <TableCell align="right">₹ {t.amount}</TableCell>
+              <TableCell
+                align="right"
+                style={{ color: "#16a34a", fontWeight: "bold" }}
+              >
+                ₹ {t.amount}
+              </TableCell>
             </motion.tr>
           ))}
         </TableBody>

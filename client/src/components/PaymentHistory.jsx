@@ -20,21 +20,88 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {motion} from 'framer-motion'
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { motion } from "framer-motion";
 
 function PaymentHistory() {
   const dummyData = [
-    { date: "2025-08-13", OwnerName: "John Doe", vehicleNumber: "KL-07-AB-1234", InsuranceType: "Comprehensive", Amount: "₹12,000" },
-    { date: "2025-07-15", OwnerName: "Akhil Kumar", vehicleNumber: "KL-05-CD-5678", InsuranceType: "Third Party", Amount: "₹7,500" },
-    { date: "2025-08-10", OwnerName: "Priya Menon", vehicleNumber: "KL-11-EF-4321", InsuranceType: "Comprehensive", Amount: "₹10,000" },
-    { date: "2025-06-25", OwnerName: "Vishnu Nair", vehicleNumber: "KL-22-GH-9876", InsuranceType: "Third Party", Amount: "₹8,200" },
-    { date: "2025-08-05", OwnerName: "Anu Thomas", vehicleNumber: "KL-10-IJ-6543", InsuranceType: "Comprehensive", Amount: "₹9,500" },
-    { date: "2025-05-18", OwnerName: "Rahul Raj", vehicleNumber: "KL-08-KL-3210", InsuranceType: "Third Party", Amount: "₹6,800" },
-    { date: "2025-08-01", OwnerName: "Deepa S", vehicleNumber: "KL-02-MN-2468", InsuranceType: "Comprehensive", Amount: "₹11,000" },
-    { date: "2025-04-12", OwnerName: "Ajay Kumar", vehicleNumber: "KL-15-OP-1357", InsuranceType: "Third Party", Amount: "₹7,300" },
-    { date: "2025-08-14", OwnerName: "Rohit Sharma", vehicleNumber: "KL-03-QR-8642", InsuranceType: "Comprehensive", Amount: "₹13,000" },
-    { date: "2025-03-20", OwnerName: "Meera P", vehicleNumber: "KL-14-ST-9753", InsuranceType: "Third Party", Amount: "₹6,500" },
-    { date: "2025-08-11", OwnerName: "Arjun R", vehicleNumber: "KL-18-UV-5432", InsuranceType: "Comprehensive", Amount: "₹12,200" },
+    {
+      date: "2025-08-13",
+      OwnerName: "John Doe",
+      vehicleNumber: "KL-07-AB-1234",
+      InsuranceType: "Comprehensive",
+      Status: "Pending",
+    },
+    {
+      date: "2025-07-15",
+      OwnerName: "Akhil Kumar",
+      vehicleNumber: "KL-05-CD-5678",
+      InsuranceType: "Third Party",
+      Status: "Rejected",
+    },
+    {
+      date: "2025-08-10",
+      OwnerName: "Priya Menon",
+      vehicleNumber: "KL-11-EF-4321",
+      InsuranceType: "Comprehensive",
+      Status: "Approved",
+    },
+    {
+      date: "2025-06-25",
+      OwnerName: "Vishnu Nair",
+      vehicleNumber: "KL-22-GH-9876",
+      InsuranceType: "Third Party",
+      Status: "Pending",
+    },
+    {
+      date: "2025-08-05",
+      OwnerName: "Anu Thomas",
+      vehicleNumber: "KL-10-IJ-6543",
+      InsuranceType: "Comprehensive",
+      Status: "Pending",
+    },
+    {
+      date: "2025-05-18",
+      OwnerName: "Rahul Raj",
+      vehicleNumber: "KL-08-KL-3210",
+      InsuranceType: "Third Party",
+      Status: "Pending",
+    },
+    {
+      date: "2025-08-01",
+      OwnerName: "Deepa S",
+      vehicleNumber: "KL-02-MN-2468",
+      InsuranceType: "Comprehensive",
+      Status: "Approved",
+    },
+    {
+      date: "2025-04-12",
+      OwnerName: "Ajay Kumar",
+      vehicleNumber: "KL-15-OP-1357",
+      InsuranceType: "Third Party",
+      Status: "Pending",
+    },
+    {
+      date: "2025-08-14",
+      OwnerName: "Rohit Sharma",
+      vehicleNumber: "KL-03-QR-8642",
+      InsuranceType: "Comprehensive",
+      Status: "Rejected",
+    },
+    {
+      date: "2025-03-20",
+      OwnerName: "Meera P",
+      vehicleNumber: "KL-14-ST-9753",
+      InsuranceType: "Third Party",
+      Status: "Approved",
+    },
+    {
+      date: "2025-08-11",
+      OwnerName: "Arjun R",
+      vehicleNumber: "KL-18-UV-5432",
+      InsuranceType: "Comprehensive",
+      Status: "Pending",
+    },
   ];
 
   const [search, setSearch] = useState("");
@@ -46,9 +113,10 @@ function PaymentHistory() {
 
   // Filter, Search, and Sort Logic
   const filteredData = dummyData
-    .filter((row) =>
-      row.OwnerName.toLowerCase().includes(search.toLowerCase()) ||
-      row.vehicleNumber.toLowerCase().includes(search.toLowerCase())
+    .filter(
+      (row) =>
+        row.OwnerName.toLowerCase().includes(search.toLowerCase()) ||
+        row.vehicleNumber.toLowerCase().includes(search.toLowerCase())
     )
     .filter((row) => (month ? row.date.split("-")[1] === month : true))
     .filter((row) => (type ? row.InsuranceType === type : true))
@@ -58,8 +126,11 @@ function PaymentHistory() {
         : new Date(b.date) - new Date(a.date)
     );
 
-  const paginatedData = filteredData.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-const rowVariant = {
+  const paginatedData = filteredData.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+  const rowVariant = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
       opacity: 1,
@@ -114,7 +185,10 @@ const rowVariant = {
 
         <FormControl size="small" sx={{ minWidth: 120 }}>
           <InputLabel>Sort by Date</InputLabel>
-          <Select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+          <Select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
             <MenuItem value="asc">Ascending</MenuItem>
             <MenuItem value="desc">Descending</MenuItem>
           </Select>
@@ -122,16 +196,31 @@ const rowVariant = {
       </Box>
 
       {/* Table */}
-      <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: "8px" }}>
+      <TableContainer
+        component={Paper}
+        sx={{ boxShadow: 3, borderRadius: "8px" }}
+      >
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#E8F5E9" }}>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Owner Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Vehicle Number</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Insurance Type</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Amount</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                Date
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                Owner Name
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                Vehicle Number
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                Insurance Type
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                Amount
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -146,16 +235,31 @@ const rowVariant = {
                   backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F1F8E9",
                   cursor: "pointer",
                 }}
-                whileHover={{  backgroundColor: "#DCEDC8" }}
+                whileHover={{ backgroundColor: "#DCEDC8" }}
               >
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.OwnerName}</TableCell>
                 <TableCell>{row.vehicleNumber}</TableCell>
                 <TableCell>{row.InsuranceType}</TableCell>
-                <TableCell>{row.Amount}</TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: "bold",
+                    color:
+                      row.Status === "Approved"
+                        ? "green"
+                        : row.Status === "Rejected"
+                        ? "red"
+                        : "orange",
+                  }}
+                >
+                  {row.Status}
+                </TableCell>
                 <TableCell>
                   <IconButton color="primary">
                     <VisibilityIcon />
+                  </IconButton>
+                  <IconButton color="primary">
+                    <EditNoteIcon />
                   </IconButton>
                   <IconButton color="error">
                     <DeleteIcon />

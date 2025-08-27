@@ -73,11 +73,25 @@ export default function Catlog() {
     })();
   }, [policies]);
 
-  const handleDelete = async (id) => {
+  const handleDeleteCompany = async (id) => {
     try {
       const { data } = await axios.delete(`/catlog/delete-company/${id}`);
       if (data.success) {
         alert("Company deleted successfully");
+        // optional: refresh list or filter out deleted company
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  };
+
+  const handleDeletePolicy = async (id) => {
+    try {
+      const { data } = await axios.delete(`/catlog/delete-policy/${id}`);
+      if (data.success) {
+        alert("Policy deleted successfully");
         // optional: refresh list or filter out deleted company
       } else {
         alert(data.message);
@@ -175,7 +189,10 @@ export default function Catlog() {
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>{row.name}</TableCell>
                           <TableCell>
-                            <IconButton color="error">
+                            <IconButton
+                              color="error"
+                              onClick={() => handleDeletePolicy(row._id)}
+                            >
                               <Trash2 size={18} />
                             </IconButton>
                           </TableCell>
@@ -271,7 +288,7 @@ export default function Catlog() {
                           <TableCell>
                             <IconButton
                               color="error"
-                              onClick={() => handleDelete(row._id)}
+                              onClick={() => handleDeleteCompany(row._id)}
                             >
                               <Trash2 size={18} />
                             </IconButton>
