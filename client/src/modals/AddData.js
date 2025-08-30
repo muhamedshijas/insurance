@@ -32,7 +32,11 @@ export default function AddData({ show, setShow }) {
   const [companies, setCompanies] = useState([]);
   const [policies, setPolicies] = useState([]);
 
+  // auto-fill today's date
+  const today = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
+    date: today, // 👈 added date
     branch: "Pulamanthole",
     agent: "EmythriKadampuzha",
     customerName: "",
@@ -87,6 +91,17 @@ export default function AddData({ show, setShow }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = async () => {
+    const { data } = await axios.post("/insurance/add-insurance", formData);
+    console.log(data);
+    if (!data.success) {
+      alert("something went wrong");
+    } else {
+      alert("Insurance Added Successfully");
+      setShow(!show);
+    }
+  };
+
   return (
     <Box
       width="100vw"
@@ -129,18 +144,23 @@ export default function AddData({ show, setShow }) {
           {activeStep === 0 && (
             <Box display="flex" flexDirection="column" gap={2}>
               <TextField
+                label="Date"
+                name="date"
+                type="date"
+                disabled
+                value={formData.date}
+              />
+              <TextField
                 label="Branch"
                 name="branch"
                 disabled
                 value={formData.branch}
-                onChange={handleChange}
               />
               <TextField
                 label="Agent Name"
                 name="agent"
                 disabled
                 value={formData.agent}
-                onChange={handleChange}
               />
               <TextField
                 label="Customer Name"
@@ -255,7 +275,12 @@ export default function AddData({ show, setShow }) {
           <Button disabled={activeStep === 0} onClick={handleBack}>
             Back
           </Button>
-          <Button variant="contained" onClick={handleNext}>
+          <Button
+            variant="contained"
+            onClick={
+              activeStep === steps.length - 1 ? handleSubmit : handleNext
+            }
+          >
             {activeStep === steps.length - 1 ? "Submit" : "Next"}
           </Button>
         </Box>

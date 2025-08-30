@@ -10,38 +10,28 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import AddData from "../modals/AddData";
+import axios from "axios";
 
 function NewPayments() {
   const [show, setShow] = useState(false);
+  const [insurances, setInsurances] = useState([]);
+
   const handleShow = () => {
     setShow(!show);
   };
-  const dummyData = [
-    {
-      date: "2025-08-13",
-      OwnerName: "John Doe",
-      vehicleNumber: "KL-07-AB-1234",
-      InsuranceType: "Comprehensive",
-      Amount: "₹12,000",
-    },
-    {
-      date: "2025-08-12",
-      OwnerName: "Akhil Kumar",
-      vehicleNumber: "KL-05-CD-5678",
-      InsuranceType: "Third Party",
-      Amount: "₹7,500",
-    },
-    {
-      date: "2025-08-14",
-      OwnerName: "Meera Nair",
-      vehicleNumber: "KL-08-EF-9876",
-      InsuranceType: "Comprehensive",
-      Amount: "₹15,000",
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get("/insurance/get-insurances");
+        if (!data.err) setInsurances(data.insurances);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, [insurances]);
 
   // Animation variant
   const rowVariant = {
@@ -104,12 +94,12 @@ function NewPayments() {
                 Insurance Type
               </TableCell>
               <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Amount
+                Status
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {dummyData.map((row, index) => (
+            {insurances.map((row, index) => (
               <motion.tr
                 key={index}
                 variants={rowVariant}
@@ -122,11 +112,11 @@ function NewPayments() {
                 }}
                 whileHover={{ backgroundColor: "#DCEDC8" }}
               >
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.OwnerName}</TableCell>
+                <TableCell>{new Date(row.date).toLocaleDateString("en-GB")}</TableCell>
+                <TableCell>{row.customerName}</TableCell>
                 <TableCell>{row.vehicleNumber}</TableCell>
-                <TableCell>{row.InsuranceType}</TableCell>
-                <TableCell>{row.Amount}</TableCell>
+                <TableCell>{row?.policyType?.name}</TableCell>
+                <TableCell>{row.status}</TableCell>
               </motion.tr>
             ))}
           </TableBody>
