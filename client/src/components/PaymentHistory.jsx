@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -17,105 +17,60 @@ import {
   InputLabel,
   Pagination,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 function PaymentHistory() {
-  const dummyData = [
-    {
-      date: "2025-08-13",
-      OwnerName: "John Doe",
-      vehicleNumber: "KL-07-AB-1234",
-      InsuranceType: "Comprehensive",
-      Status: "Pending",
-    },
-    {
-      date: "2025-07-15",
-      OwnerName: "Akhil Kumar",
-      vehicleNumber: "KL-05-CD-5678",
-      InsuranceType: "Third Party",
-      Status: "Rejected",
-    },
-    {
-      date: "2025-08-10",
-      OwnerName: "Priya Menon",
-      vehicleNumber: "KL-11-EF-4321",
-      InsuranceType: "Comprehensive",
-      Status: "Approved",
-    },
-    {
-      date: "2025-06-25",
-      OwnerName: "Vishnu Nair",
-      vehicleNumber: "KL-22-GH-9876",
-      InsuranceType: "Third Party",
-      Status: "Pending",
-    },
-    {
-      date: "2025-08-05",
-      OwnerName: "Anu Thomas",
-      vehicleNumber: "KL-10-IJ-6543",
-      InsuranceType: "Comprehensive",
-      Status: "Pending",
-    },
-    {
-      date: "2025-05-18",
-      OwnerName: "Rahul Raj",
-      vehicleNumber: "KL-08-KL-3210",
-      InsuranceType: "Third Party",
-      Status: "Pending",
-    },
-    {
-      date: "2025-08-01",
-      OwnerName: "Deepa S",
-      vehicleNumber: "KL-02-MN-2468",
-      InsuranceType: "Comprehensive",
-      Status: "Approved",
-    },
-    {
-      date: "2025-04-12",
-      OwnerName: "Ajay Kumar",
-      vehicleNumber: "KL-15-OP-1357",
-      InsuranceType: "Third Party",
-      Status: "Pending",
-    },
-    {
-      date: "2025-08-14",
-      OwnerName: "Rohit Sharma",
-      vehicleNumber: "KL-03-QR-8642",
-      InsuranceType: "Comprehensive",
-      Status: "Rejected",
-    },
-    {
-      date: "2025-03-20",
-      OwnerName: "Meera P",
-      vehicleNumber: "KL-14-ST-9753",
-      InsuranceType: "Third Party",
-      Status: "Approved",
-    },
-    {
-      date: "2025-08-11",
-      OwnerName: "Arjun R",
-      vehicleNumber: "KL-18-UV-5432",
-      InsuranceType: "Comprehensive",
-      Status: "Pending",
-    },
-  ];
-
+  const [insurances, setInsurances] = useState([]);
+  const [loading, setLoading] = useState(true); // 👈 loading state
   const [search, setSearch] = useState("");
   const [month, setMonth] = useState("");
   const [type, setType] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const [page, setPage] = useState(1);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get("/insurance/get-insurances");
+        if (!data.err) setInsurances(data.insurances);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [refresh]);
+
+  const handleDeleteInsurance = async (id) => {
+    try {
+      const { data } = await axios.delete(`/insurance/delete-insurance/${id}`);
+      if (data.success) {
+        alert("Insurance deleted successfully");
+        setRefresh(!refresh)
+        // optional: refresh list or filter out deleted company 
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  };
+
   const rowsPerPage = 5;
 
   // Filter, Search, and Sort Logic
-  const filteredData = dummyData
+  const filteredData = insurances
     .filter(
       (row) =>
-        row.OwnerName.toLowerCase().includes(search.toLowerCase()) ||
+        row.customerName.toLowerCase().includes(search.toLowerCase()) ||
         row.vehicleNumber.toLowerCase().includes(search.toLowerCase())
     )
     .filter((row) => (month ? row.date.split("-")[1] === month : true))
@@ -130,6 +85,7 @@ function PaymentHistory() {
     (page - 1) * rowsPerPage,
     page * rowsPerPage
   );
+
   const rowVariant = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -138,6 +94,7 @@ function PaymentHistory() {
       transition: { delay: i * 0.1, duration: 0.6 },
     }),
   };
+
   return (
     <Box p={3}>
       {/* Heading */}
@@ -173,113 +130,114 @@ function PaymentHistory() {
             <MenuItem value="12">December</MenuItem>
           </Select>
         </FormControl>
+      </Box>
 
-        <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Insurance Type</InputLabel>
-          <Select value={type} onChange={(e) => setType(e.target.value)}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="Comprehensive">Comprehensive</MenuItem>
-            <MenuItem value="Third Party">Third Party</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>Sort by Date</InputLabel>
-          <Select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
+      {/* Loading */}
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={5}>
+          <CircularProgress color="success" />
+        </Box>
+      ) : filteredData.length === 0 ? (
+        // No Data State
+        <Box display="flex" justifyContent="center" mt={5}>
+          <Typography variant="h6" color="textSecondary">
+            🚫 No records found
+          </Typography>
+        </Box>
+      ) : (
+        <>
+          {/* Table */}
+          <TableContainer
+            component={Paper}
+            sx={{ boxShadow: 3, borderRadius: "8px" }}
           >
-            <MenuItem value="asc">Ascending</MenuItem>
-            <MenuItem value="desc">Descending</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#E8F5E9" }}>
+                  <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                    Date
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                    Owner Name
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                    Vehicle Number
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                    Insurance Type
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                    Status
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedData.map((row, index) => (
+                  <motion.tr
+                    key={index}
+                    variants={rowVariant}
+                    initial="hidden"
+                    animate="visible"
+                    custom={index}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F1F8E9",
+                      cursor: "pointer",
+                    }}
+                    whileHover={{ backgroundColor: "#DCEDC8" }}
+                  >
+                    <TableCell>
+                      {new Date(row.date).toLocaleDateString("en-GB")}
+                    </TableCell>
+                    <TableCell>{row.customerName}</TableCell>
+                    <TableCell>{row.vehicleNumber}</TableCell>
+                    <TableCell>{row?.policyType?.name}</TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: "bold",
+                        color:
+                          row.status === "Approved"
+                            ? "green"
+                            : row.status === "Rejected"
+                            ? "red"
+                            : "orange",
+                      }}
+                    >
+                      {row.status}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton color="primary">
+                        <VisibilityIcon />
+                      </IconButton>
+                      <IconButton color="primary">
+                        <EditNoteIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDeleteInsurance(row._id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </motion.tr>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-      {/* Table */}
-      <TableContainer
-        component={Paper}
-        sx={{ boxShadow: 3, borderRadius: "8px" }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "#E8F5E9" }}>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Date
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Owner Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Vehicle Number
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Insurance Type
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Amount
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#2E7D32" }}>
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedData.map((row, index) => (
-              <motion.tr
-                key={index}
-                variants={rowVariant}
-                initial="hidden"
-                animate="visible"
-                custom={index}
-                style={{
-                  backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F1F8E9",
-                  cursor: "pointer",
-                }}
-                whileHover={{ backgroundColor: "#DCEDC8" }}
-              >
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.OwnerName}</TableCell>
-                <TableCell>{row.vehicleNumber}</TableCell>
-                <TableCell>{row.InsuranceType}</TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color:
-                      row.Status === "Approved"
-                        ? "green"
-                        : row.Status === "Rejected"
-                        ? "red"
-                        : "orange",
-                  }}
-                >
-                  {row.Status}
-                </TableCell>
-                <TableCell>
-                  <IconButton color="primary">
-                    <VisibilityIcon />
-                  </IconButton>
-                  <IconButton color="primary">
-                    <EditNoteIcon />
-                  </IconButton>
-                  <IconButton color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </motion.tr>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Pagination */}
-      <Box mt={3} display="flex" justifyContent="center">
-        <Pagination
-          count={Math.ceil(filteredData.length / rowsPerPage)}
-          page={page}
-          onChange={(e, value) => setPage(value)}
-          color="success"
-        />
-      </Box>
+          {/* Pagination */}
+          <Box mt={3} display="flex" justifyContent="center">
+            <Pagination
+              count={Math.ceil(filteredData.length / rowsPerPage)}
+              page={page}
+              onChange={(e, value) => setPage(value)}
+              color="success"
+            />
+          </Box>
+        </>
+      )}
     </Box>
   );
 }

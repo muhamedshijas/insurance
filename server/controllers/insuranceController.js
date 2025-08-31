@@ -88,12 +88,22 @@ export async function addInsurance(req, res) {
 
 export async function getInsurances(req, res) {
   try {
-    console.log("hiii");
-    
-    const insurances = await InsuranceModel.find().lean().populate("company").populate("policyType");
+    const insurances = await InsuranceModel.find()
+      .lean()
+      .populate("company")
+      .populate("policyType");
     return res.json({ success: true, insurances });
   } catch (err) {
     console.log(err);
     return res.json({ success: false, message: "Internal Server Error" });
+  }
+}
+export async function deleteInsurance(req, res) {
+  try {
+    const { id } = req.params;
+    await InsuranceModel.findByIdAndDelete(id);
+    res.json({ success: true, message: "Insurance deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Error deleting policy" });
   }
 }

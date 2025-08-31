@@ -33,38 +33,8 @@ import {
   CartesianGrid,
 } from "recharts";
 import { motion } from "framer-motion";
-import React from "react";
-
-const companyData = [
-  { name: "GODIGIT", value: 10 },
-  { name: "NEW INDIA", value: 4 },
-  { name: "IFFCO TOKIO", value: 6 },
-  { name: "HDFC ERGO", value: 8 },
-  { name: "ICICI LOMBARD", value: 12 },
-];
-
-const policyTypeData = [
-  { name: "Third Party (TP)", value: 14 },
-  { name: "Comprehensive (PKG)", value: 18 },
-  { name: "Standalone OD", value: 7 },
-  { name: "Health", value: 10 },
-  { name: "Travel", value: 5 },
-];
-
-const monthlyData = [
-  { month: "Jan", collection: 10000, commission: 2000 },
-  { month: "Feb", collection: 12000, commission: 2500 },
-  { month: "Mar", collection: 8000, commission: 1500 },
-  { month: "Apr", collection: 15000, commission: 3000 },
-  { month: "May", collection: 18000, commission: 3500 },
-  { month: "Jun", collection: 14000, commission: 2800 },
-  { month: "Jul", collection: 20000, commission: 4000 },
-  { month: "Aug", collection: 12100, commission: 3200 },
-  { month: "Sep", collection: 18400, commission: 3800 },
-  { month: "Oct", collection: 10000, commission: 3000 },
-  { month: "Nov", collection: 15000, commission: 2400 },
-  { month: "Dec", collection: 9000, commission: 900 },
-];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -79,17 +49,40 @@ const cardVariant = {
 };
 
 function Dashboard() {
+  const [applicationSummary, setApplicationSummary] = useState({});
+  const [paymentSummary, setPaymentSummary] = useState({});
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [companiesCount, setCompaniesCount] = useState([]);
+  const [policiesCount, setPoliciesCount] = useState([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await axios.get("/reports/get-dashboard");
+        if (!data.err) {
+          setApplicationSummary(data.applicationSummary);
+          setPaymentSummary(data.paymentSummary);
+          setCompaniesCount(data.companiesCount);
+          setPoliciesCount(data.policiesCount);
+          setMonthlyData(data.monthlyData);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
   return (
     <Box p={3}>
       {/* Applications Section */}
       <Typography variant="h6" mb={2} fontWeight="bold">
         Applications Summary
       </Typography>
+
       <Grid container spacing={3}>
         {[
           {
             title: "Total Applications",
-            value: "23",
+            value: applicationSummary.total,
             color: "primary.main",
             icon: (
               <AssignmentTurnedIn
@@ -99,7 +92,7 @@ function Dashboard() {
           },
           {
             title: "Pending",
-            value: "15",
+            value: applicationSummary.pending,
             color: "warning.main",
             icon: (
               <PendingActions sx={{ fontSize: 40, color: "warning.main" }} />
@@ -107,13 +100,13 @@ function Dashboard() {
           },
           {
             title: "Approved",
-            value: "5",
+            value: applicationSummary.approved,
             color: "success.main",
             icon: <CheckCircle sx={{ fontSize: 40, color: "success.main" }} />,
           },
           {
             title: "Rejected",
-            value: "5",
+            value: applicationSummary.rejected,
             color: "error.main",
             icon: <CancelIcon sx={{ fontSize: 40, color: "error.main" }} />,
           },
@@ -158,13 +151,13 @@ function Dashboard() {
         {[
           {
             title: "Total Payment",
-            value: "₹ 50,000",
+            value: paymentSummary.totalAmount,
             color: "primary.main",
             icon: <Payment sx={{ fontSize: 40, color: "primary.main" }} />,
           },
           {
             title: "Total Commission",
-            value: "₹ 10,000",
+            value: paymentSummary.totalCommission,
             color: "secondary.main",
             icon: (
               <MonetizationOn sx={{ fontSize: 40, color: "secondary.main" }} />
@@ -243,10 +236,10 @@ function Dashboard() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {companyData.map((row, i) => (
+                    {companiesCount.map((row, i) => (
                       <TableRow key={i}>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell align="right">{row.value}</TableCell>
+                        <TableCell>{row.companyName}</TableCell>
+                        <TableCell align="right">{row.count}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -300,10 +293,10 @@ function Dashboard() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {policyTypeData.map((row, i) => (
+                    {policiesCount.map((row, i) => (
                       <TableRow key={i}>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell align="right">{row.value}</TableCell>
+                        <TableCell>{row.policyName}</TableCell>
+                        <TableCell align="right">{row.count}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -365,14 +358,20 @@ function Dashboard() {
               </Typography>
               <PieChart width={350} height={250}>
                 <Pie
-                  data={companyData}
+                  data={companiesCount.map((c) => ({
+                    name: c.companyName,
+                    value: c.count,
+                  }))}
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
                   dataKey="value"
                 >
-                  {companyData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  {companiesCount.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -396,14 +395,20 @@ function Dashboard() {
               </Typography>
               <PieChart width={350} height={250}>
                 <Pie
-                  data={policyTypeData}
+                  data={policiesCount.map((p) => ({
+                    name: p.policyName,
+                    value: p.count,
+                  }))}
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
                   dataKey="value"
                 >
-                  {policyTypeData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  {policiesCount.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
