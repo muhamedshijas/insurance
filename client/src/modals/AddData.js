@@ -147,7 +147,6 @@ export default function AddData({ show, setShow }) {
                 label="Date"
                 name="date"
                 type="date"
-                disabled
                 value={formData.date}
               />
               <TextField

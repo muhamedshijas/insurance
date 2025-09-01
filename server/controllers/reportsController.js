@@ -8,22 +8,18 @@ import {
 
 export async function getDashboard(req, res) {
   try {
-   
-    
     const applicationSummary = await fetchApplicationSummary();
     const paymentSummary = await fetchPaymentSummary();
     const companyCount = await fetchCountOfCompanies();
     const policyCount = await fetchCountOfPolicies();
-    const monthlyPayments= await getMonthlyIncomeAndCommission()
-    console.log(monthlyPayments);
-    
+    const monthlyPayments = await getMonthlyIncomeAndCommission();
     return res.json({
       success: true,
       applicationSummary: applicationSummary,
       paymentSummary: paymentSummary,
       companiesCount: companyCount,
       policiesCount: policyCount,
-      monthlyData:monthlyPayments
+      monthlyData: monthlyPayments,
     });
   } catch (err) {}
 }

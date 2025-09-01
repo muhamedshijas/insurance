@@ -24,6 +24,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { motion } from "framer-motion";
 import axios from "axios";
+import ViewInsurance from "../modals/ViewInsurance";
+import EditInsurance from "../modals/EditInsurance";
 
 function PaymentHistory() {
   const [insurances, setInsurances] = useState([]);
@@ -34,6 +36,9 @@ function PaymentHistory() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [page, setPage] = useState(1);
   const [refresh, setRefresh] = useState(false);
+  const [seletedId, setSelectedId] = useState("");
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -54,8 +59,8 @@ function PaymentHistory() {
       const { data } = await axios.delete(`/insurance/delete-insurance/${id}`);
       if (data.success) {
         alert("Insurance deleted successfully");
-        setRefresh(!refresh)
-        // optional: refresh list or filter out deleted company 
+        setRefresh(!refresh);
+        // optional: refresh list or filter out deleted company
       } else {
         alert(data.message);
       }
@@ -64,6 +69,15 @@ function PaymentHistory() {
     }
   };
 
+  const handleViewModal = async (id) => {
+    setSelectedId(id);
+    await setShowViewModal(!showViewModal);
+  };
+
+  const handleEditModal = async (id) => {
+    setSelectedId(id);
+    await setShowEditModal(!showEditModal);
+  };
   const rowsPerPage = 5;
 
   // Filter, Search, and Sort Logic
@@ -209,10 +223,14 @@ function PaymentHistory() {
                     </TableCell>
                     <TableCell>
                       <IconButton color="primary">
-                        <VisibilityIcon />
+                        <VisibilityIcon
+                          onClick={() => handleViewModal(row._id)}
+                        />
                       </IconButton>
                       <IconButton color="primary">
-                        <EditNoteIcon />
+                        <EditNoteIcon
+                          onClick={() => handleEditModal(row._id)}
+                        />
                       </IconButton>
                       <IconButton
                         color="error"
@@ -237,6 +255,21 @@ function PaymentHistory() {
             />
           </Box>
         </>
+      )}
+      {showViewModal && (
+        <ViewInsurance
+          show={showViewModal}
+          setShow={setShowViewModal}
+          id={seletedId}
+        />
+      )}
+
+      {showEditModal && (
+        <EditInsurance
+          show={showEditModal}
+          setShow={setShowEditModal}
+          id={seletedId}
+        />
       )}
     </Box>
   );

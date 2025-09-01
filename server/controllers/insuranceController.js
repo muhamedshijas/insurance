@@ -107,3 +107,20 @@ export async function deleteInsurance(req, res) {
     res.status(500).json({ success: false, message: "Error deleting policy" });
   }
 }
+
+export async function getInsuranceById(req, res) {
+  try {
+    const { id } = req.params;
+    const insurance = await InsuranceModel.findOne({ _id: id })
+      .populate("company")
+      .populate("policyType")
+      .lean();
+    if (!insurance) {
+      return res.json({ success: false, message: "No data Found" });
+    }
+    return res.json({ success: true, insurance });
+  } catch (err) {
+    console.log(err);
+    return res.json({ success: false, message: "Internal Sever Error" });
+  }
+}
