@@ -269,6 +269,8 @@ function PaymentHistory() {
           show={showEditModal}
           setShow={setShowEditModal}
           id={seletedId}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
       )}
     </Box>

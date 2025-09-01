@@ -124,3 +124,16 @@ export async function getInsuranceById(req, res) {
     return res.json({ success: false, message: "Internal Sever Error" });
   }
 }
+
+export async function updateStatus(req, res) {
+  try {
+    console.log("hii");
+    
+    const { id, status } = req.body;
+    await InsuranceModel.updateOne({ _id: id }, { $set: { status: status } });
+    return res.json({ success: true, message: "Updated Successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.json({ success: false, message: "Internal Server Error" });
+  }
+}

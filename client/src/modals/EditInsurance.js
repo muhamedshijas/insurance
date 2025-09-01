@@ -14,7 +14,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 
-function EditInsurance({ show, setShow, id }) {
+function EditInsurance({ show, setShow, id, refresh, setRefresh }) {
   const [insurance, setInsurance] = useState({});
   const [status, setStatus] = useState("Pending");
 
@@ -22,10 +22,19 @@ function EditInsurance({ show, setShow, id }) {
     setShow(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const { data } = await axios.post("/insurance/update-status", {
+      id,
+      status,
+    });
+    if (data.success) {
+      alert("Insurance Updated Successfully");
+      setRefresh(!refresh);
+      setShow(!show);
+    } else {
+      alert("something Went Wrong");
+    }
     console.log("Submitting update:", { id, status });
-    // TODO: call API to update insurance
-    setShow(false);
   };
   useEffect(() => {
     (async () => {
@@ -86,7 +95,7 @@ function EditInsurance({ show, setShow, id }) {
             disabled
             fullWidth
             value={insurance.vehicleNumber}
-          /> 
+          />
 
           <FormControl fullWidth>
             <InputLabel>Status</InputLabel>
