@@ -5,6 +5,12 @@ import {
   fetchPaymentSummary,
   getMonthlyIncomeAndCommission,
 } from "../helpers/reports.js";
+import {
+  fetchApplicationSummaryByMonth,
+  fetchInsurances,
+  fetchPaymentSummaryByMonth,
+} from "../helpers/reportsbyMonth.js";
+import InsuranceModel from "../models/InsuranceModel.js";
 
 export async function getDashboard(req, res) {
   try {
@@ -22,4 +28,22 @@ export async function getDashboard(req, res) {
       monthlyData: monthlyPayments,
     });
   } catch (err) {}
+}
+
+export async function getReportsByMonth(req, res) {
+  try {
+    const { month } = req.query;
+    const applicationSummary = await fetchApplicationSummaryByMonth(month);
+    const paymentSummary = await fetchPaymentSummaryByMonth(month);
+    const recents = await fetchInsurances(month);
+
+    return res.json({
+      success: true,
+      applicationSummary: applicationSummary,
+      paymentSummary: paymentSummary,
+      recents: recents,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
