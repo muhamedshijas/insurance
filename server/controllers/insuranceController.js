@@ -127,8 +127,6 @@ export async function getInsuranceById(req, res) {
 
 export async function updateStatus(req, res) {
   try {
-    console.log("hii");
-    
     const { id, status } = req.body;
     await InsuranceModel.updateOne({ _id: id }, { $set: { status: status } });
     return res.json({ success: true, message: "Updated Successfully" });

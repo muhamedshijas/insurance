@@ -1,29 +1,24 @@
 import React, { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import SideBar from "./components/SideBar";
-import Dashboard from "./components/Dashboard";
-import PaymentHistory from "./components/PaymentHistory";
-import Reports from "./components/Reports";
-import NewPayments from "./components/NewPayments";
-import Login from "./components/Login";
-import Catlog from "./components/Catlog";
+import Login from "./components/Insurance/Login";
+import InsuranceRouter from "./routes/InsuranceRouter";
+import Home from "./components/Home";
+import ExpenseRouter from "./routes/ExpenseRouter";
+import KuriRouter from "./routes/KuriRouter";
 
 function App() {
+  // Axios setup
   axios.defaults.baseURL = "http://localhost:5000/";
   axios.defaults.withCredentials = true;
 
   const { user, refresh } = useSelector((state) => state);
   const dispatch = useDispatch();
 
+  // Check authentication on app load / refresh
   useEffect(() => {
     (async function () {
       try {
@@ -34,65 +29,29 @@ function App() {
         });
       } catch (err) {
         console.error("Auth check failed:", err);
-        dispatch({
-          type: "user",
-          payload: { login: false, details: null },
-        });
+        dispatch({ type: "user", payload: { login: false, details: null } });
       }
     })();
   }, [refresh, dispatch]);
 
-  const sidebarWidth = 240;
-
   return (
-    <Box display="flex">
-      {/* Sidebar only when logged in */}
-      {user.login && (
-        <Box
-          sx={{
-            width: sidebarWidth,
-            position: "fixed",
-            left: 0,
-            top: 0,
-            height: "100vh",
-            bgcolor: "white",
-            boxShadow: 2,
-            zIndex: 1000,
-          }}
-        >
-          <SideBar />
-        </Box>
-      )}
-
-      {/* Main Content */}
-      <Box
-        flex={1}
-        p={3}
-        bgcolor="#FAFAFA"
-        minHeight="100vh"
-        sx={{ ml: user.login ? `${sidebarWidth}px` : 0 }}
-      >
+      <Box>
         <Routes>
-          {!user.login ? (
+          {/* Public route */}
+          {!user.login && <Route path="*" element={<Login />} />}
+
+          {/* Protected routes */}
+          {user.login && (
             <>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </>
-          ) : (
-            <>
-              {/* Private Routes */}
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/new-payment" element={<NewPayments />} />
-              <Route path="/payments-history" element={<PaymentHistory />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/catlog" element={<Catlog />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Navigate to="/" replace />} />
+              <Route path="/insurance/*" element={<InsuranceRouter />} />
+              <Route path="/expense/*" element={<ExpenseRouter/>}/>
+              <Route path="/kuri/*" element={<KuriRouter/>}/>
             </>
           )}
         </Routes>
       </Box>
-    </Box>
   );
 }
 

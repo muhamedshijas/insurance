@@ -25,8 +25,8 @@ import {
   Building2,
   FileText,
 } from "lucide-react";
-import AddPolicy from "../modals/AddPolicy";
-import AddCompany from "../modals/AddCompany";
+import AddPolicy from "../../modals/AddPolicy";
+import AddCompany from "../../modals/AddCompany";
 import axios from "axios";
 import { useTheme } from "@mui/material/styles";
 

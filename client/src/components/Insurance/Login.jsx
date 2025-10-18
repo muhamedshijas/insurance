@@ -1,5 +1,5 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
-import bg from "../images/bg.jpg";
+import bg from "../../images/bg.jpg";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";

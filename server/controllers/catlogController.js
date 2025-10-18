@@ -49,7 +49,6 @@ export async function deleteCompany(req, res) {
 export async function addPolicy(req, res) {
   try {
     const { policy } = req.body;
-    console.log(policy);
 
     // check if policy already exists
     const exist = await PolicyModel.findOne({ name: policy });

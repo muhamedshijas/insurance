@@ -93,7 +93,6 @@ export default function AddData({ show, setShow }) {
 
   const handleSubmit = async () => {
     const { data } = await axios.post("/insurance/add-insurance", formData);
-    console.log(data);
     if (!data.success) {
       alert("something went wrong");
     } else {

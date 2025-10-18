@@ -1,4 +1,13 @@
-import { Box, Button, Typography, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+} from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import axios from "axios";
@@ -9,9 +18,10 @@ import {
   LayoutDashboard,
   CreditCard,
   History,
-  Boxes,
+  Archive,
   BarChart3,
   LogOut,
+  ArrowLeft,
 } from "lucide-react";
 
 function SideBar() {
@@ -20,11 +30,19 @@ function SideBar() {
   const dispatch = useDispatch();
 
   const menuItems = [
-    { label: "Dashboard", path: "/", icon: <LayoutDashboard size={20} /> },
-    { label: "New Payment", path: "/new-payment", icon: <CreditCard size={20} /> },
-    { label: "Payments History", path: "/payments-history", icon: <History size={20} /> },
-    { label: "Catlogs", path: "/catlog", icon: <Boxes size={20} /> },
-    { label: "Reports", path: "/reports", icon: <BarChart3 size={20} /> },
+    { label: "Dashboard", path: "/expense", icon: <LayoutDashboard size={20} /> },
+    { label: "Add Expense", path: "/expense/add", icon: <CreditCard size={20} /> },
+    {
+      label: "Expense History",
+      path: "/expense/history",
+      icon: <History size={20} />,
+    },
+    {
+      label: "Manage Categories",
+      path: "/expense/categories",
+      icon: <Archive size={20} />,
+    },
+    { label: "Reports", path: "/expense/reports", icon: <BarChart3 size={20} /> },
   ];
 
   async function handleLogout() {
@@ -50,16 +68,18 @@ function SideBar() {
       flexDirection="column"
       p={2}
     >
-      {/* Logo / Title */}
-      <Typography
-        variant="h6"
-        fontWeight="bold"
-        mb={4}
-        color="#4CAF50"
-        textAlign="center"
-      >
-        Payment Tracker
-      </Typography>
+      {/* Back button + Logo / Title */}
+      <Box display="flex" alignItems="center" mb={4}>
+        <IconButton
+          onClick={() => navigate("/")}
+          sx={{ color: "#654ea3", mr: 1 }}
+        >
+          <ArrowLeft size={20} />
+        </IconButton>
+        <Typography variant="h6" fontWeight="bold" color="#654ea3">
+          Expense Manager
+        </Typography>
+      </Box>
 
       {/* Navigation Links */}
       <Box flex={1}>
@@ -75,17 +95,17 @@ function SideBar() {
                 sx={{
                   mb: 1,
                   borderRadius: "6px",
-                  backgroundColor: isActive ? "#4CAF50" : "transparent",
+                  backgroundColor: isActive ? "#654ea3" : "transparent",
                   color: isActive ? "#FFFFFF" : "#5F5F5F",
                   "&:hover": {
-                    backgroundColor: isActive ? "#45A049" : "#E8F5E9",
-                    color: isActive ? "#FFFFFF" : "#388E3C",
+                    backgroundColor: isActive ? "#654ea3" : "#f0e1f8",
+                    color: isActive ? "#FFFFFF" : "#5A3E9E",
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: isActive ? "#FFFFFF" : "#4CAF50",
+                    color: isActive ? "#FFFFFF" : "#654ea3",
                     minWidth: "40px",
                   }}
                 >

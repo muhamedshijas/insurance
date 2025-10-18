@@ -24,8 +24,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { motion } from "framer-motion";
 import axios from "axios";
-import ViewInsurance from "../modals/ViewInsurance";
-import EditInsurance from "../modals/EditInsurance";
+import ViewInsurance from "../../modals/ViewInsurance";
+import EditInsurance from "../../modals/EditInsurance";
 
 function PaymentHistory() {
   const [insurances, setInsurances] = useState([]);

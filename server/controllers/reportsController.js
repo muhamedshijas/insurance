@@ -36,7 +36,6 @@ export async function getReportsByMonth(req, res) {
     const applicationSummary = await fetchApplicationSummaryByMonth(month);
     const paymentSummary = await fetchPaymentSummaryByMonth(month);
     const recents = await fetchInsurances(month);
-
     return res.json({
       success: true,
       applicationSummary: applicationSummary,

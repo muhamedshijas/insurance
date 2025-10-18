@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import AddData from "../modals/AddData";
+import AddData from "../../modals/AddData";
 import axios from "axios";
 
 function NewPayments() {
