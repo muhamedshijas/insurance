@@ -45,7 +45,7 @@ export async function checkAuth(req, res) {
 
 export async function logout(req, res) {
   try {
-    console.log("logouted");
+
     
     return res
       .cookie("usertoken", "", {

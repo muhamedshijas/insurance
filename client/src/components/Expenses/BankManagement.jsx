@@ -17,11 +17,14 @@ import AddBank from "../../modals/AddBank";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 import ViewBank from "../../modals/ViewBank";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function BankManagement() {
   const [show, setShow] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [banks, setBanks] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [seletedId, setSelectedId] = useState("");
 
   useEffect(() => {
     (async function () {
@@ -34,14 +37,21 @@ function BankManagement() {
         console.error(err);
       }
     })();
-  }, [banks]);
+  }, [refresh]);
   const handleModal = () => {
     setShow(!show);
   };
-  const handleViewModal = () => {
+  const handleViewModal = (id) => {
+    setSelectedId(id);
     setShowViewModal(!showViewModal);
   };
-
+  const handleDeleteAcc = async (id) => {
+    const { data } = await axios.delete(`/acc/delete-acc/${id}`);
+    if (data.success) {
+      alert("Account Deleted Successfull");
+      setRefresh(!refresh);
+    }
+  };
   const rowVariant = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -126,7 +136,10 @@ function BankManagement() {
                 <TableCell>{row.amountAvailable}</TableCell>
                 <TableCell>
                   <IconButton color="primary">
-                    <VisibilityIcon onClick={handleViewModal} />
+                    <VisibilityIcon onClick={() => handleViewModal(row._id)} />
+                  </IconButton>
+                  <IconButton color="error">
+                    <DeleteIcon onClick={() => handleDeleteAcc(row._id)} />
                   </IconButton>
                 </TableCell>
               </motion.tr>
@@ -135,8 +148,21 @@ function BankManagement() {
         </Table>
       </TableContainer>
 
-      {show && <AddBank show={show} setShow={setShow} />}
-      {showViewModal && <ViewBank  showViewModal={showViewModal} setShowViewModal={setShowViewModal}/>}
+      {show && (
+        <AddBank
+          show={show}
+          setShow={setShow}
+          refresh={refresh}
+          setRefresh={setRefresh}
+        />
+      )}
+      {showViewModal && (
+        <ViewBank
+          showViewModal={showViewModal}
+          setShowViewModal={setShowViewModal}
+          id={seletedId}
+        />
+      )}
     </Box>
   );
 }

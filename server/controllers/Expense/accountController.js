@@ -2,7 +2,18 @@ import accountModel from "../../models/accountModel.js";
 
 export async function addNewAccount(req, res) {
   try {
-    const { bankName, accNo, amountAvailable } = req.body;
+    const {
+      bankName,
+      accNo,
+      ifscCode,
+      branch,
+      branchAddress,
+      ownerName,
+      mobileNo,
+      accountInfo,
+      accountType,
+      amountAvailable,
+    } = req.body;
 
     // Validate required fields
     if (!bankName || !accNo || amountAvailable === undefined) {
@@ -19,14 +30,20 @@ export async function addNewAccount(req, res) {
         .status(400);
     }
 
-    // Create new account
+    // // Create new account
     const newAcc = await accountModel.create({
       bankName,
       accNo,
+      ifscCode,
+      branch,
+      branchAddress,
+      ownerName,
+      mobileNo,
+      accountInfo,
+      accountType,
       amountAvailable,
     });
 
-    console.log("✅ New Account Created:", newAcc);
     return res.status(201).json({
       success: true,
       message: "Account created successfully",
@@ -41,12 +58,44 @@ export async function addNewAccount(req, res) {
   }
 }
 
-export async function getBanks(req, res) {
-  const banks = await accountModel.find().lean();
-  console.log(banks);
-  return res.json({
-    success: true,
-    message: "banks fecthed Successfully",
-    banks,
-  });
+export async function getAccs(req, res) {
+  try {
+    const banks = await accountModel.find().lean();
+    return res.json({
+      success: true,
+      message: "banks fecthed Successfully",
+      banks,
+    });
+  } catch (err) {
+    return res.json({
+      success: false,
+      message: "banks fetching Failed",
+    });
+  }
+}
+export async function getAccById(req, res) {
+  try {
+    const id = req.params.id;
+    const bank = await accountModel.findOne({ _id: id }).lean();
+    return res.json({
+      success: true,
+      bank,
+      message: "bank fetching Successfull",
+    });
+  } catch (err) {
+    return res.json({
+      success: false,
+      message: "banks fetching Failed",
+    });
+  }
+}
+
+export async function deleteAcc(req, res) {
+  try {
+    const { id } = req.params;
+    await accountModel.findByIdAndDelete(id);
+    res.json({ success: true, message: "Account deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Error deleting Account" });
+  }
 }

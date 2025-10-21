@@ -4,42 +4,41 @@ import {
   Button,
   Divider,
   IconButton,
+  CircularProgress,
+  Grid,
 } from "@mui/material";
-import React, { useState } from "react";
-import { CloseRounded } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import { CloseRounded, RefreshRounded } from "@mui/icons-material";
 import TransferMoney from "./TranseferMoney";
+import axios from "axios";
 
-
-function ViewBank({ showViewModal, setShowViewModal }) {
+function ViewBank({ showViewModal, setShowViewModal, id }) {
   const [transferOpen, setTransferOpen] = useState(false);
+  const [bank, setBank] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const handleClose = () => {
-    setShowViewModal(false);
-  };
+  const handleClose = () => setShowViewModal(false);
 
-  const bank = {
-    id: 1, // unique ID for backend
-    bankName: "HDFC Bank",
-    place: "Kochi, Kerala",
-    ifscCode: "HDFC0001234",
-    accNo: "1234 5678 9012",
-    ownerName: "Muhamed Shijas",
-    mobileNo: "+91 8086665118",
-    latestTransactions: [
-      { to: "Amazon", date: "2025-10-18", amount: "₹2,500" },
-      { to: "Flipkart", date: "2025-10-15", amount: "₹1,200" },
-      { to: "Netflix", date: "2025-10-10", amount: "₹499" },
-    ],
-  };
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    setError(false);
 
-  const infoFields = [
-    { label: "Bank Name", value: bank.bankName },
-    { label: "Account Number", value: bank.accNo },
-    { label: "IFSC Code", value: bank.ifscCode },
-    { label: "Branch", value: bank.place },
-    { label: "Owner", value: bank.ownerName },
-    { label: "Mobile", value: bank.mobileNo },
-  ];
+    const timer = setTimeout(async () => {
+      try {
+        const { data } = await axios.get(`/acc/get-accbyid/${id}`);
+        if (data?.bank) setBank(data.bank);
+        else setError(true);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [id]);
 
   if (!showViewModal) return null;
 
@@ -48,37 +47,34 @@ function ViewBank({ showViewModal, setShowViewModal }) {
       width="100vw"
       height="100vh"
       position="fixed"
-      left="0"
-      top="0"
-      bgcolor="rgba(5, 5, 5, 0.15)"
+      top={0}
+      left={0}
+      bgcolor="rgba(0,0,0,0.35)"
       display="flex"
       justifyContent="center"
       alignItems="center"
-      zIndex={1000}
+      zIndex={1200}
     >
       <Box
-        bgcolor="white"
-        borderRadius="12px"
-        boxShadow="0 0 15px rgba(0,0,0,0.3)"
-        width="500px"
+        width="600px"
         maxHeight="90vh"
         overflow="auto"
-        sx={{
-          scrollbarWidth: "none",
-          "&::-webkit-scrollbar": { display: "none" },
-        }}
+        bgcolor="white"
+        borderRadius="16px"
+        boxShadow="0 0 25px rgba(0,0,0,0.2)"
+        sx={{ "&::-webkit-scrollbar": { display: "none" }, position: "relative" }}
       >
         {/* Header */}
         <Box
           display="flex"
           justifyContent="space-between"
           alignItems="center"
-          bgcolor="#5A3E9E"
+          bgcolor="#6C4AB6"
           color="white"
           px={3}
           py={2}
-          borderTopLeftRadius="12px"
-          borderTopRightRadius="12px"
+          borderTopLeftRadius="16px"
+          borderTopRightRadius="16px"
         >
           <Typography variant="h6" fontWeight="bold">
             Bank Details
@@ -90,84 +86,156 @@ function ViewBank({ showViewModal, setShowViewModal }) {
 
         {/* Body */}
         <Box p={3}>
-          <Typography variant="h6" color="#5A3E9E" fontWeight="bold" mb={2}>
-            Account Information
-          </Typography>
-
-          {infoFields.map((field, index) => (
+          {loading ? (
             <Box
-              key={index}
               display="flex"
+              flexDirection="column"
               alignItems="center"
-              mb={1.5}
-              sx={{ borderBottom: "1px solid #eee", pb: 1 }}
+              justifyContent="center"
+              height="300px"
             >
-              <Typography sx={{ width: "180px", fontWeight: "bold", color: "#333" }}>
-                {field.label}:
+              <CircularProgress sx={{ color: "#6C4AB6", mb: 2 }} />
+              <Typography variant="body1" color="textSecondary">
+                Loading account details...
               </Typography>
-              <Typography sx={{ color: "#555" }}>{field.value}</Typography>
             </Box>
-          ))}
-
-          <Divider sx={{ my: 3 }} />
-
-          <Typography variant="h6" color="#5A3E9E" fontWeight="bold" mb={2}>
-            Latest Transactions
-          </Typography>
-
-          {bank.latestTransactions.map((tx, index) => (
+          ) : error ? (
             <Box
-              key={index}
+              textAlign="center"
+              height="300px"
               display="flex"
-              justifyContent="space-between"
+              flexDirection="column"
               alignItems="center"
-              bgcolor="#f5f3fc"
-              p={1.5}
-              mb={1}
-              borderRadius="8px"
+              justifyContent="center"
             >
-              <Box>
-                <Typography variant="body2">
-                  <strong>To:</strong> {tx.to}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {tx.date}
-                </Typography>
+              <Typography variant="h6" color="error" mb={1}>
+                Failed to load bank details ❌
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<RefreshRounded />}
+                onClick={() => window.location.reload()}
+              >
+                Reload
+              </Button>
+            </Box>
+          ) : (
+            <>
+              {/* Scroll Indicator */}
+              <Box textAlign="center" mb={1}>
               </Box>
-              <Typography variant="body2" fontWeight="bold" color="#5A3E9E">
-                {tx.amount}
-              </Typography>
-            </Box>
-          ))}
 
-          <Divider sx={{ my: 3 }} />
+              <Grid container spacing={2} direction="column">
+                {/* Bank Information */}
+                <Grid item xs={12}>
+                  <InfoCard title="Bank Information">
+                    <Field label="Bank Name" value={bank.bankName} />
+                    <Field label="Branch" value={bank.branch} />
+                    <Field label="IFSC Code" value={bank.ifscCode} />
+                    <Field label="Branch Address" value={bank.branchAddress} />
+                  </InfoCard>
+                </Grid>
 
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{
-              bgcolor: "#5A3E9E",
-              color: "white",
-              py: 1.2,
-              borderRadius: "6px",
-              textTransform: "none",
-              "&:hover": { bgcolor: "#462d82" },
-            }}
-            onClick={() => setTransferOpen(true)}
-          >
-            Transfer Money
-          </Button>
+                {/* Account Information */}
+                <Grid item xs={12}>
+                  <InfoCard title="Account Information">
+                    <Field label="Account Holder" value={bank.ownerName} />
+                    <Field label="Mobile Number" value={bank.mobileNo} />
+                    <Field label="Account Number" value={bank.accNo} />
+                    <Field label="Account Type" value={bank.accountType} />
+                    <Field label="Account Info" value={bank.accountInfo} />
+                    <Field
+                      label="Status"
+                      value={bank.isActive ? "Active ✅" : "Inactive ❌"}
+                    />
+                  </InfoCard>
+                </Grid>
+
+                {/* Balance Section (full width) */}
+                <Grid item xs={12}>
+                  <InfoCard title="Balance Available">
+                    <Box
+                      p={2}
+                      bgcolor="#f3e8ff"
+                      borderRadius="12px"
+                      textAlign="center"
+                    >
+                      <Typography variant="subtitle2" color="#6C4AB6">
+                        Total Balance
+                      </Typography>
+                      <Typography variant="h4" fontWeight="bold" color="#6C4AB6">
+                        ₹{bank.amountAvailable.toLocaleString()}
+                      </Typography>
+                    </Box>
+                  </InfoCard>
+                </Grid>
+              </Grid>
+
+              {/* Sticky Transfer Button */}
+              <Box
+                position="sticky"
+                bottom={0}
+                mt={2}
+                p={1.5}
+                bgcolor="white"
+                borderTop="1px solid #eee"
+              >
+                <Button
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    bgcolor: "#6C4AB6",
+                    color: "white",
+                    py: 1.2,
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    "&:hover": { bgcolor: "#55359a" },
+                  }}
+                  onClick={() => setTransferOpen(true)}
+                >
+                  Transfer Money
+                </Button>
+              </Box>
+            </>
+          )}
         </Box>
       </Box>
 
-      {/* Transfer Modal */}
-      <TransferMoney
-        open={transferOpen}
-        onClose={() => setTransferOpen(false)}
-        bankId={bank.id}
-      />
+      {transferOpen && (
+        <TransferMoney
+          open={transferOpen}
+          onClose={() => setTransferOpen(false)}
+          bankId={bank?._id}
+        />
+      )}
     </Box>
   );
 }
+
+// Reusable Components
+const InfoCard = ({ title, children }) => (
+  <Box
+    mb={2}
+    p={2}
+    bgcolor="#fafafa"
+    borderRadius="12px"
+    sx={{ border: "1px solid #eee" }}
+  >
+    <Typography variant="subtitle1" fontWeight="bold" color="#6C4AB6" mb={1.5}>
+      {title}
+    </Typography>
+    {children}
+  </Box>
+);
+
+const Field = ({ label, value }) => (
+  <Box display="flex" justifyContent="space-between" mb={1}>
+    <Typography fontWeight={600} color="#555">
+      {label}:
+    </Typography>
+    <Typography color="#333">{value || "-"}</Typography>
+  </Box>
+);
 
 export default ViewBank;

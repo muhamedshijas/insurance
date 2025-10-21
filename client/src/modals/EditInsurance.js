@@ -34,7 +34,6 @@ function EditInsurance({ show, setShow, id, refresh, setRefresh }) {
     } else {
       alert("something Went Wrong");
     }
-    console.log("Submitting update:", { id, status });
   };
   useEffect(() => {
     (async () => {
