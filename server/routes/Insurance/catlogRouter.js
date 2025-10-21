@@ -6,7 +6,7 @@ import {
   deletePolicy,
   getCompanies,
   getPolicies,
-} from "../controllers/catlogController.js";
+} from "../../controllers/Insurance/catlogController.js";
 
 const router = express.Router();
 router.post("/add-company", addCompany);

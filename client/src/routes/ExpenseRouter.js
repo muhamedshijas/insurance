@@ -5,6 +5,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import axios from "axios";
 import Dashboard from "../components/Expenses/Dashboard";
+import BankManagement from "../components/Expenses/BankManagement";
 
 function ExpenseRouter() {
   const { user, refresh } = useSelector((state) => state);
@@ -67,6 +68,8 @@ function ExpenseRouter() {
           ) : (
             <>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/add-expenses" element={<Dashboard />} />
+              <Route path="/bank" element={<BankManagement />} />
             </>
           )}
         </Routes>

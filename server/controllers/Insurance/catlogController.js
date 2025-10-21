@@ -1,5 +1,6 @@
-import CompanyModel from "../models/companyModel.js";
-import PolicyModel from "../models/policyModel.js";
+import CompanyModel from "../../models/companyModel.js";
+import PolicyModel from "../../models/policyModel.js";
+
 
 export async function addCompany(req, res) {
   try {

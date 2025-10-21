@@ -5,7 +5,7 @@ import {
   getInsuranceById,
   getInsurances,
   updateStatus,
-} from "../controllers/insuranceController.js";
+} from "../../controllers/Insurance/insuranceController.js";
 
 const router = express.Router();
 router.post("/add-insurance", addInsurance);
@@ -14,3 +14,4 @@ router.delete("/delete-insurance/:id", deleteInsurance);
 router.get("/get-insurancebyid/:id", getInsuranceById);
 router.post("/update-status", updateStatus);
 export default router;
+ 

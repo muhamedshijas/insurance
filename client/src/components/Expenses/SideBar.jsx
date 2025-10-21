@@ -30,19 +30,31 @@ function SideBar() {
   const dispatch = useDispatch();
 
   const menuItems = [
-    { label: "Dashboard", path: "/expense", icon: <LayoutDashboard size={20} /> },
-    { label: "Add Expense", path: "/expense/add", icon: <CreditCard size={20} /> },
     {
-      label: "Expense History",
-      path: "/expense/history",
+      label: "Dashboard",
+      path: "/expense",
+      icon: <LayoutDashboard size={20} />,
+    },
+    {
+      label: "Expenses",
+      path: "/expense/add-expenses",
+      icon: <CreditCard size={20} />,
+    },
+    {
+      label: "Incomes",
+      path: "/expense/add-income",
       icon: <History size={20} />,
     },
     {
-      label: "Manage Categories",
-      path: "/expense/categories",
+      label: "Manage Banks",
+      path: "/expense/bank",
       icon: <Archive size={20} />,
     },
-    { label: "Reports", path: "/expense/reports", icon: <BarChart3 size={20} /> },
+    {
+      label: "Reports",
+      path: "/expense/reports",
+      icon: <BarChart3 size={20} />,
+    },
   ];
 
   async function handleLogout() {

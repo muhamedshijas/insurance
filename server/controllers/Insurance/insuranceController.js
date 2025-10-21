@@ -1,12 +1,12 @@
-import CompanyModel from "../models/companyModel.js";
-import InsuranceModel from "../models/InsuranceModel.js";
-import PolicyModel from "../models/policyModel.js";
+import CompanyModel from "../../models/companyModel.js";
+import InsuranceModel from "../../models/InsuranceModel.js";
+import PolicyModel from "../../models/policyModel.js";
 
 export async function addInsurance(req, res) {
   try {
     const {
       date,
-      branch,
+      branch, 
       agent,
       customerName,
       vehicleNumber,

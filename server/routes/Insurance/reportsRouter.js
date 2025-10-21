@@ -2,7 +2,7 @@ import express from "express";
 import {
   getDashboard,
   getReportsByMonth,
-} from "../controllers/reportsController.js";
+} from "../../controllers/Insurance/reportsController.js";
 
 const router = express.Router();
 

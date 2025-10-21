@@ -4,13 +4,13 @@ import {
   fetchCountOfPolicies,
   fetchPaymentSummary,
   getMonthlyIncomeAndCommission,
-} from "../helpers/reports.js";
+} from "../../helpers/reports.js";
 import {
   fetchApplicationSummaryByMonth,
   fetchInsurances,
   fetchPaymentSummaryByMonth,
-} from "../helpers/reportsbyMonth.js";
-import InsuranceModel from "../models/InsuranceModel.js";
+} from "../../helpers/reportsbyMonth.js";
+
 
 export async function getDashboard(req, res) {
   try {
