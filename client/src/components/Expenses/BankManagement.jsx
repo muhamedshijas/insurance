@@ -16,9 +16,11 @@ import React, { useEffect, useState } from "react";
 import AddBank from "../../modals/AddBank";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
+import ViewBank from "../../modals/ViewBank";
 
 function BankManagement() {
   const [show, setShow] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [banks, setBanks] = useState([]);
 
   useEffect(() => {
@@ -35,6 +37,9 @@ function BankManagement() {
   }, [banks]);
   const handleModal = () => {
     setShow(!show);
+  };
+  const handleViewModal = () => {
+    setShowViewModal(!showViewModal);
   };
 
   const rowVariant = {
@@ -121,7 +126,7 @@ function BankManagement() {
                 <TableCell>{row.amountAvailable}</TableCell>
                 <TableCell>
                   <IconButton color="primary">
-                    <VisibilityIcon />
+                    <VisibilityIcon onClick={handleViewModal} />
                   </IconButton>
                 </TableCell>
               </motion.tr>
@@ -131,6 +136,7 @@ function BankManagement() {
       </TableContainer>
 
       {show && <AddBank show={show} setShow={setShow} />}
+      {showViewModal && <ViewBank  showViewModal={showViewModal} setShowViewModal={setShowViewModal}/>}
     </Box>
   );
 }
