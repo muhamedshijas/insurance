@@ -161,6 +161,8 @@ function BankManagement() {
           showViewModal={showViewModal}
           setShowViewModal={setShowViewModal}
           id={seletedId}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
       )}
     </Box>

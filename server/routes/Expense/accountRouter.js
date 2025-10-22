@@ -12,4 +12,5 @@ router.post("/add-acc", addNewAccount);
 router.get("/get-acc", getAccs);
 router.get("/get-accbyid/:id", getAccById);
 router.delete("/delete-acc/:id", deleteAcc);
+
 export default router;

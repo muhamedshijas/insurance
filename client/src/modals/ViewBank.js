@@ -12,7 +12,13 @@ import { CloseRounded, RefreshRounded } from "@mui/icons-material";
 import TransferMoney from "./TranseferMoney";
 import axios from "axios";
 
-function ViewBank({ showViewModal, setShowViewModal, id }) {
+function ViewBank({
+  showViewModal,
+  setShowViewModal,
+  id,
+  refresh,
+  setRefresh,
+}) {
   const [transferOpen, setTransferOpen] = useState(false);
   const [bank, setBank] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +44,7 @@ function ViewBank({ showViewModal, setShowViewModal, id }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [id, refresh]);
 
   if (!showViewModal) return null;
 
@@ -62,7 +68,10 @@ function ViewBank({ showViewModal, setShowViewModal, id }) {
         bgcolor="white"
         borderRadius="16px"
         boxShadow="0 0 25px rgba(0,0,0,0.2)"
-        sx={{ "&::-webkit-scrollbar": { display: "none" }, position: "relative" }}
+        sx={{
+          "&::-webkit-scrollbar": { display: "none" },
+          position: "relative",
+        }}
       >
         {/* Header */}
         <Box
@@ -122,8 +131,7 @@ function ViewBank({ showViewModal, setShowViewModal, id }) {
           ) : (
             <>
               {/* Scroll Indicator */}
-              <Box textAlign="center" mb={1}>
-              </Box>
+              <Box textAlign="center" mb={1}></Box>
 
               <Grid container spacing={2} direction="column">
                 {/* Bank Information */}
@@ -163,7 +171,11 @@ function ViewBank({ showViewModal, setShowViewModal, id }) {
                       <Typography variant="subtitle2" color="#6C4AB6">
                         Total Balance
                       </Typography>
-                      <Typography variant="h4" fontWeight="bold" color="#6C4AB6">
+                      <Typography
+                        variant="h4"
+                        fontWeight="bold"
+                        color="#6C4AB6"
+                      >
                         ₹{bank.amountAvailable.toLocaleString()}
                       </Typography>
                     </Box>
@@ -207,6 +219,10 @@ function ViewBank({ showViewModal, setShowViewModal, id }) {
           open={transferOpen}
           onClose={() => setTransferOpen(false)}
           bankId={bank?._id}
+          bankName={bank?.bankName}
+          amountAvailable={bank?.amountAvailable}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
       )}
     </Box>

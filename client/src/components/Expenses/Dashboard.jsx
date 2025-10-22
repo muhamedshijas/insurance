@@ -4,7 +4,7 @@ import React from 'react'
 function Dashboard() {
   return (
     <Box p={3}>
-    Expense section
+    Das
     </Box>
   )
 }

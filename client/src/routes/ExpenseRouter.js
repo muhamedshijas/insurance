@@ -68,7 +68,8 @@ function ExpenseRouter() {
           ) : (
             <>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/add-expenses" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              
               <Route path="/bank" element={<BankManagement />} />
             </>
           )}
