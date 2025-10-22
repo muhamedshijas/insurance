@@ -50,7 +50,7 @@ const insuranceSchema = new mongoose.Schema(
     comm: {
       type: Number,
       required: true,
-    },
+    }, 
 
     status: {
       type: String,
