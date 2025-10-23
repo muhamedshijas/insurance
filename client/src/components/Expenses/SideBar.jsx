@@ -37,13 +37,8 @@ function SideBar() {
     },
     {
       label: "Expenses",
-      path: "/expense/add-expenses",
+      path: "/expense/transactions",
       icon: <CreditCard size={20} />,
-    },
-    {
-      label: "Incomes",
-      path: "/expense/add-income",
-      icon: <History size={20} />,
     },
     {
       label: "Manage Banks",

@@ -27,9 +27,7 @@ const transactionSchema = new mongoose.Schema({
   bank: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Bank",
-    required: function () {
-      return this.type !== "Transfer"; // only for Expense/Income
-    },
+    required: true,
   },
   description: {
     type: String,

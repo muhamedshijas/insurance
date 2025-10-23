@@ -77,7 +77,6 @@ export default function AddData({ show, setShow }) {
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);
     } else {
-      console.log("✅ Final Submit Data:", formData);
       alert("Data Submitted Successfully!");
       // send formData to backend here
     }

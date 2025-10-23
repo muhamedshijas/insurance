@@ -30,12 +30,10 @@ export async function transferMoney(req, res) {
 
     // ✅ 3. Check balance
     if (fromBank.amountAvailable < amount) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Insufficient balance in source bank.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Insufficient balance in source bank.",
+      });
     }
 
     // ✅ 4. Update balances
@@ -51,6 +49,7 @@ export async function transferMoney(req, res) {
       description:
         desc || `Transfer from ${fromBank.bankName} to ${toBank.bankName}`,
       amount,
+      bank: from,
       transferDetails: {
         fromBank: from, // must be ObjectId, not object
         toBank: to, // same here
@@ -72,7 +71,7 @@ export async function transferMoney(req, res) {
   }
 }
 export async function getTransactions(req, res) {
-  const transactions = await transactionModel.find({}).lean();
-  console.log(transactions);
+  const transactions = await transactionModel.find({}).populate('bank').lean();
+ 
   return res.json({ transactions });
 }
