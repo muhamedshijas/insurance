@@ -79,18 +79,70 @@ export async function getTransactions(req, res) {
 export async function addTransaction(req, res) {
   try {
     const { bankId, amount, category, description } = req.body;
+
+    // Basic validation
+    if (!bankId || !amount || !category) {
+      return res.json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const bank = await accountModel.findById(bankId);
+
+    if (!bank) {
+      return res.json({
+        success: false,
+        message: "Bank account not found",
+      });
+    }
+
+    let updatedBalance = bank.amountAvailable;
+
+    // Update balance based on category
+    if (category === "Expense") {
+      if (Number(amount) > Number(bank.amountAvailable)) {
+        return res.json({
+          success: false,
+          message: "Insufficient balance in the selected bank",
+        });
+      }
+      updatedBalance = Number(bank.amountAvailable) - Number(amount);
+    } else if (category === "Income") {
+      updatedBalance = Number(bank.amountAvailable) + Number(amount);
+    } else {
+      return res.json({
+        success: false,
+        message: "Invalid transaction category",
+      });
+    }
+
+    // Update the bank balance
+    await accountModel.updateOne(
+      { _id: bankId },
+      { $set: { amountAvailable: updatedBalance } }
+    );
+
+    // Create the transaction record with updated balance
     const newTransaction = await transactionModel.create({
       bank: bankId,
-      amount,
+      amount: Number(amount),
       type: category,
       description,
+      balance: updatedBalance, // 🆕 Store balance snapshot after transaction
     });
+    console.log(newTransaction);
+
     return res.json({
       success: true,
-      message: "Transaction Added Succesfully",
+      message: "Transaction added successfully",
+      transaction: newTransaction,
     });
   } catch (err) {
-    console.log(err);
-    return res.json({ success: false, message: "Some thng went wrong" });
+    console.error(err);
+    return res.json({
+      success: false,
+      message: "Something went wrong while adding transaction",
+    });
   }
 }

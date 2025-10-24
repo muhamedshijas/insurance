@@ -43,6 +43,10 @@ const transactionSchema = new mongoose.Schema({
       return this.type === "Transfer";
     },
   },
+  balance: {
+    type: Number,
+    required: true,
+  },
 });
 
 // Ensure `transferDetails` is not saved if type != "Transfer"
