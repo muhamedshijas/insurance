@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
+import AddTransactions from "../../modals/AddTransactions";
 
 function ExpenseManagement() {
   const [transactions, setTransactions] = useState([]);
@@ -25,6 +26,11 @@ function ExpenseManagement() {
   const [refresh, setRefresh] = useState(false);
   const [filterBank, setFilterBank] = useState("");
   const [filterType, setFilterType] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const handleAddModal = () => {
+    setShowAddModal(!showAddModal);
+  };
 
   useEffect(() => {
     (async function fetchData() {
@@ -32,7 +38,9 @@ function ExpenseManagement() {
         const { data: bankData } = await axios.get("/acc/get-acc");
         if (!bankData.err) setBanks(bankData.banks);
 
-        const { data: transactionData } = await axios.get("/acc/transaction/get-transactions");
+        const { data: transactionData } = await axios.get(
+          "/acc/transaction/get-transactions"
+        );
         if (!transactionData.err) setTransactions(transactionData.transactions);
       } catch (err) {
         console.error(err);
@@ -81,20 +89,14 @@ function ExpenseManagement() {
             bgcolor: "#654ea3",
             "&:hover": { bgcolor: "#5A3E9E" },
           }}
-          onClick={() => console.log("Open Add Transaction Modal")}
+          onClick={handleAddModal}
         >
           Add New Transaction
         </Button>
       </Box>
 
       {/* Filter bar */}
-      <Box
-        display="flex"
-        gap={2}
-        mb={2}
-        flexWrap="wrap"
-        alignItems="center"
-      >
+      <Box display="flex" gap={2} mb={2} flexWrap="wrap" alignItems="center">
         <TextField
           select
           label="Filter by Bank"
@@ -138,13 +140,27 @@ function ExpenseManagement() {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f3e8ff" }}>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>S.No</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>Type</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>Description</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>Amount</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>Bank</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>Action</TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                S.No
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                Date
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                Type
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                Description
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                Amount
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                Bank
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#5A3E9E" }}>
+                Action
+              </TableCell>
             </TableRow>
           </TableHead>
 
@@ -178,6 +194,15 @@ function ExpenseManagement() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {showAddModal && (
+        <AddTransactions
+          show={showAddModal}
+          setShow={setShowAddModal}
+          refresh={refresh}
+          setRefresh={setRefresh}
+        />
+      )}
     </Box>
   );
 }

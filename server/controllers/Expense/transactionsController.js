@@ -71,7 +71,26 @@ export async function transferMoney(req, res) {
   }
 }
 export async function getTransactions(req, res) {
-  const transactions = await transactionModel.find({}).populate('bank').lean();
- 
+  const transactions = await transactionModel.find({}).populate("bank").lean();
+
   return res.json({ transactions });
+}
+
+export async function addTransaction(req, res) {
+  try {
+    const { bankId, amount, category, description } = req.body;
+    const newTransaction = await transactionModel.create({
+      bank: bankId,
+      amount,
+      type: category,
+      description,
+    });
+    return res.json({
+      success: true,
+      message: "Transaction Added Succesfully",
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({ success: false, message: "Some thng went wrong" });
+  }
 }
