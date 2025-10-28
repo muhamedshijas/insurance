@@ -1,4 +1,5 @@
 import accountModel from "../../models/accountModel.js";
+import transactionModel from "../../models/transactionModel.js";
 
 export async function addNewAccount(req, res) {
   try {
@@ -77,6 +78,8 @@ export async function getAccById(req, res) {
   try {
     const id = req.params.id;
     const bank = await accountModel.findOne({ _id: id }).lean();
+  
+    
     return res.json({
       success: true,
       bank,
@@ -93,9 +96,31 @@ export async function getAccById(req, res) {
 export async function deleteAcc(req, res) {
   try {
     const { id } = req.params;
+
+    // Check if bank exists
+    const bank = await accountModel.findById(id);
+    if (!bank) {
+      return res.status(404).json({
+        success: false,
+        message: "Bank account not found",
+      });
+    }
+
+    // Delete all transactions linked to this bank
+    await transactionModel.deleteMany({ bank: id });
+
+    // Delete the bank itself
     await accountModel.findByIdAndDelete(id);
-    res.json({ success: true, message: "Account deleted successfully" });
+
+    return res.json({
+      success: true,
+      message: "Bank and all related transactions deleted successfully",
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Error deleting Account" });
+    console.error("Error deleting bank:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Error deleting bank and related transactions",
+    });
   }
 }

@@ -16,8 +16,11 @@ import React, { useEffect, useState } from "react";
 import AddBank from "../../modals/AddBank";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
-import ViewBank from "../../modals/ViewBank";
+import ViewBank from "./ViewBank";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
 
 function BankManagement() {
   const [show, setShow] = useState(false);
@@ -25,6 +28,8 @@ function BankManagement() {
   const [banks, setBanks] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [seletedId, setSelectedId] = useState("");
+
+  const  navigate=useNavigate()
 
   useEffect(() => {
     (async function () {
@@ -38,20 +43,57 @@ function BankManagement() {
       }
     })();
   }, [refresh]);
+
   const handleModal = () => {
     setShow(!show);
   };
+
   const handleViewModal = (id) => {
     setSelectedId(id);
-    setShowViewModal(!showViewModal);
+    navigate(`/expense/bank/${id}`)
   };
+
   const handleDeleteAcc = async (id) => {
-    const { data } = await axios.delete(`/acc/delete-acc/${id}`);
-    if (data.success) {
-      alert("Account Deleted Successfull");
-      setRefresh(!refresh);
-    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "If you delete this bank, all related transactions will also be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const { data } = await axios.delete(`/acc/delete-acc/${id}`);
+          if (data.success) {
+            Swal.fire({
+              icon: "success",
+              title: "Deleted!",
+              text: "The bank and its transactions have been removed.",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setRefresh(!refresh);
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error!",
+              text: data.message || "Failed to delete bank.",
+            });
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Something went wrong while deleting.",
+          });
+        }
+      }
+    });
   };
+
   const rowVariant = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -152,15 +194,6 @@ function BankManagement() {
         <AddBank
           show={show}
           setShow={setShow}
-          refresh={refresh}
-          setRefresh={setRefresh}
-        />
-      )}
-      {showViewModal && (
-        <ViewBank
-          showViewModal={showViewModal}
-          setShowViewModal={setShowViewModal}
-          id={seletedId}
           refresh={refresh}
           setRefresh={setRefresh}
         />

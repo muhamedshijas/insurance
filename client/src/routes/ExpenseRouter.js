@@ -7,6 +7,7 @@ import axios from "axios";
 import Dashboard from "../components/Expenses/Dashboard";
 import BankManagement from "../components/Expenses/BankManagement";
 import ExpenseManagement from "../components/Expenses/ExpenseManagement";
+import ViewBankPage from "../components/Expenses/ViewBank";
 
 function ExpenseRouter() {
   const { user, refresh } = useSelector((state) => state);
@@ -72,6 +73,7 @@ function ExpenseRouter() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/transactions" element={<ExpenseManagement />} />
               <Route path="/bank" element={<BankManagement />} />
+              <Route path ="/bank/:id" element={<ViewBankPage/>}/>
             </>
           )}
         </Routes>

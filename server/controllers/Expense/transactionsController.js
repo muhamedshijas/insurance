@@ -5,7 +5,7 @@ export async function transferMoney(req, res) {
   try {
     const { amount, from, to, desc } = req.body;
 
-    // ✅ 1. Validate input
+    // 1️⃣ Validate input
     if (!amount || !from || !to) {
       return res
         .status(400)
@@ -18,7 +18,7 @@ export async function transferMoney(req, res) {
         .json({ success: false, message: "Cannot transfer to the same bank." });
     }
 
-    // ✅ 2. Fetch both banks
+    // 2️⃣ Fetch both banks
     const fromBank = await accountModel.findById(from);
     const toBank = await accountModel.findById(to);
 
@@ -28,7 +28,7 @@ export async function transferMoney(req, res) {
         .json({ success: false, message: "One or both banks not found." });
     }
 
-    // ✅ 3. Check balance
+    // 3️⃣ Check balance
     if (fromBank.amountAvailable < amount) {
       return res.status(400).json({
         success: false,
@@ -36,24 +36,34 @@ export async function transferMoney(req, res) {
       });
     }
 
-    // ✅ 4. Update balances
+    // 4️⃣ Update balances
     fromBank.amountAvailable -= amount;
     toBank.amountAvailable += amount;
 
     await fromBank.save();
     await toBank.save();
 
-    // ✅ 5. Create transaction
+    // 5️⃣ Create transaction (store the updated balance in transaction)
     const newTransaction = await transactionModel.create({
       type: "Transfer",
       description:
         desc || `Transfer from ${fromBank.bankName} to ${toBank.bankName}`,
       amount,
-      bank: from,
+      bank: fromBank._id,
+      balance: fromBank.amountAvailable, // balance snapshot after deduction
       transferDetails: {
-        fromBank: from, // must be ObjectId, not object
-        toBank: to, // same here
+        fromBank: fromBank._id,
+        toBank: toBank._id,
       },
+    });
+
+    // Optionally, create a transaction for the receiving bank as "Income"
+    await transactionModel.create({
+      type: "Income",
+      description: `Received transfer from ${fromBank.bankName}`,
+      amount,
+      bank: toBank._id,
+      balance: toBank.amountAvailable, // balance snapshot after addition
     });
 
     return res.status(200).json({
@@ -70,8 +80,9 @@ export async function transferMoney(req, res) {
     });
   }
 }
+
 export async function getTransactions(req, res) {
-  const transactions = await transactionModel.find({}).populate("bank").lean();
+  const transactions = await transactionModel.find({}).populate("bank").lean().sort({date:-1});
 
   return res.json({ transactions });
 }
@@ -131,7 +142,7 @@ export async function addTransaction(req, res) {
       description,
       balance: updatedBalance, // 🆕 Store balance snapshot after transaction
     });
-    console.log(newTransaction);
+ 
 
     return res.json({
       success: true,
@@ -146,3 +157,38 @@ export async function addTransaction(req, res) {
     });
   }
 }
+
+export async function getTransactionsByBank(req, res) {
+  try {
+    const { id } = req.params; // or req.query if you're using ?id=
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Bank ID is required" });
+    }
+
+    const transactions = await transactionModel
+      .find({ bank: id })
+      .sort({ date: -1 }) // sort newest first
+      .limit(5)
+      .lean();
+
+    if (!transactions.length) {
+      return res.json({ success: false, message: "No Transactions Found" });
+    }
+
+    return res.json({
+      success: true,
+      transactions,
+      message: "Transactions fetched successfully",
+    });
+  } catch (err) {
+    console.error("Error fetching transactions:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching transactions",
+    });
+  }
+}
+
+
